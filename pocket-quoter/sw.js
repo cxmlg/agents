@@ -1,6 +1,6 @@
 /* 展会口袋报价器 - 离线缓存
  * 更新应用时把 CACHE 版本号 +1，老缓存会自动清除 */
-const CACHE = 'pqs-v9';
+const CACHE = 'pqs-v11';
 const ASSETS = [
   './',
   './index.html',

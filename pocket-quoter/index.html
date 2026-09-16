@@ -84,6 +84,9 @@ select,.in-input{border:1px solid #e3e8e6;background:#f4f6f5;border-radius:10px;
 .chip .dot.stripe{background:repeating-linear-gradient(90deg,#33455f 0 3px,#f2ede3 3px 6px)}
 .quick{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
 .quick button{border:1px solid #e3e8e6;background:#fff;border-radius:8px;padding:5px 11px;font-size:12px;color:#5b6a67}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.row2 .mini-label{font-size:11px;color:#6b7a77;display:block;margin-bottom:4px}
+.row2 select{width:100%;font-size:14px;padding:9px 8px}
 
 /* ---------- 底部生成按钮 ---------- */
 .cta{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;padding:18px 16px calc(12px + env(safe-area-inset-bottom));background:linear-gradient(180deg,rgba(238,241,239,0),#eef1ef 40%);z-index:8}
@@ -112,6 +115,7 @@ select,.in-input{border:1px solid #e3e8e6;background:#f4f6f5;border-radius:10px;
 .line b.up{color:#c2622a}
 .line b.down{color:#177a4b}
 .line.base{font-weight:700}
+.sd-cust{display:inline-block;font-size:12px;color:#0e4f45;background:#e9f4f0;border-radius:99px;padding:3px 11px;margin:2px 0 8px;font-weight:700}
 .line.final{background:#f0f7f4;border-radius:10px;padding:10px 12px;font-weight:800;color:#0e4f45;border-top:0;margin-top:4px}
 .sd-total{border-top:1px solid #eef1ef;margin-top:8px;padding-top:10px;font-size:13.5px;color:#3f5350}
 .sd-total b{color:#0e4f45;font-size:16px}
@@ -328,23 +332,27 @@ select,.in-input{border:1px solid #e3e8e6;background:#f4f6f5;border-radius:10px;
         </div>
 
         <div class="field">
-          <label>包装</label>
-          <select id="pack">
-            <option value="carton">出口纸箱</option>
-            <option value="brand">客户品牌彩盒</option>
-            <option value="window">彩盒 + PVC 开窗</option>
-            <option value="vacuum">真空压缩袋装</option>
-          </select>
-        </div>
-
-        <div class="field">
-          <label>付款方式</label>
-          <select id="pay">
-            <option value="tt3070">T/T 30% 定金 / 70% 见提单</option>
-            <option value="tt100">T/T 100% 预付</option>
-            <option value="lc">L/C 即期信用证</option>
-            <option value="dp">D/P 即期付款交单</option>
-          </select>
+          <label>包装 / 付款方式</label>
+          <div class="row2">
+            <div>
+              <label class="mini-label">包装</label>
+              <select id="pack">
+                <option value="carton">出口纸箱</option>
+                <option value="brand">客户品牌彩盒</option>
+                <option value="window">彩盒+PVC开窗</option>
+                <option value="vacuum">真空压缩袋</option>
+              </select>
+            </div>
+            <div>
+              <label class="mini-label">付款方式</label>
+              <select id="pay">
+                <option value="tt3070">T/T 30/70</option>
+                <option value="tt100">T/T 100%预付</option>
+                <option value="lc">L/C 即期</option>
+                <option value="dp">D/P 即期</option>
+              </select>
+            </div>
+          </div>
         </div>
 
         <div class="field">
@@ -356,7 +364,9 @@ select,.in-input{border:1px solid #e3e8e6;background:#f4f6f5;border-radius:10px;
         </div>
 
         <div class="field">
-          <label>客户背景</label>
+          <label>客户信息</label>
+          <input id="cust" class="in-input" style="width:100%;margin-bottom:8px" list="cust-list" maxlength="60" placeholder="客户名称 / 公司（选填）">
+          <datalist id="cust-list"></datalist>
           <div class="seg" id="seg-cust" data-key="cust">
             <button type="button" data-v="new">新客</button>
             <button type="button" data-v="ret">老客返单</button>
@@ -399,6 +409,7 @@ select,.in-input{border:1px solid #e3e8e6;background:#f4f6f5;border-radius:10px;
     <div id="pane-sales" class="pane">
       <div class="card">
         <div class="sd-prod" id="sd-prod"></div>
+        <div class="sd-cust" id="sd-cust" style="display:none"></div>
         <div id="sd-lines"></div>
         <div class="sd-total" id="sd-total"></div>
         <div class="mchip" id="sd-margin" hidden></div>
@@ -569,7 +580,7 @@ select,.in-input{border:1px solid #e3e8e6;background:#f4f6f5;border-radius:10px;
 
 <script>
 'use strict';
-const APP_VER='1.8';
+const APP_VER='1.9.1';
 const $=s=>document.querySelector(s);
 const $$=s=>Array.from(document.querySelectorAll(s));
 
@@ -634,7 +645,7 @@ const RULE_SCHEMA=[
 ];
 
 /* ================= 状态 ================= */
-const DEF={productCode:'NT-60-0713',tab:'lib',qty:3000,tol:5,colors:[0,1,2,3,4],term:'DDP',port:'HAMBURG',pack:'brand',pay:'tt3070',deliv:'normal',cust:'new',target:15,oeko:true,bsci:true};
+const DEF={productCode:'NT-60-0713',tab:'lib',qty:3000,tol:5,colors:[0,1,2,3,4],term:'DDP',port:'HAMBURG',pack:'brand',pay:'tt3070',deliv:'normal',cust:'new',custName:'',target:15,oeko:true,bsci:true};
 let state=loadState(),rules=loadRules(),products=loadProducts(),history=loadHistory();
 /* 产品库可能在设置里被改过，校验当前选中产品仍然存在 */
 if(!products.some(p=>p.code===state.productCode)){state.productCode=products[0].code;save();}
@@ -652,6 +663,7 @@ function loadState(){
   if(!PACKS[st.pack])st.pack=DEF.pack;
   if(!PAYS[st.pay])st.pay=DEF.pay;
   if(!CUSTS[st.cust])st.cust=DEF.cust;
+  st.custName=String(st.custName==null?'':st.custName).trim().slice(0,60);
   if(st.term!=='FOB'&&st.term!=='CIF'&&st.term!=='DDP')st.term='DDP';
   if(st.deliv!=='normal'&&st.deliv!=='rush')st.deliv='normal';
   st.target=Math.max(0,parseFloat(st.target)||0);
@@ -780,7 +792,8 @@ function calcOf(s){
 function currentFormSnap(){
   return {product:P(),qty:state.qty,tol:state.tol,colors:state.colors.slice(),
     term:state.term,port:state.port,pack:state.pack,pay:state.pay,deliv:state.deliv,
-    cust:state.cust,target:state.target,oeko:state.oeko,bsci:state.bsci};
+    cust:state.cust,custName:(state.custName||'').trim().slice(0,60),
+    target:state.target,oeko:state.oeko,bsci:state.bsci};
 }
 
 /* ================= 渲染：首页 ================= */
@@ -812,7 +825,7 @@ function renderHistory(){
     <div class="hcard" data-i="${i}">
       <div class="h-info">
         <div class="h-ref">${esc(h.ref||'')}${price?' · '+price+'/套':''}</div>
-        <div class="h-sub">${esc(h.product&&h.product.cn||'')} · ${fmtInt(h.qty||0)} 套 · ${esc(h.term||'')}${h.port&&h.term!=='FOB'?' '+esc(h.port):''}</div>
+        <div class="h-sub">${esc(h.product&&h.product.cn||'')} · ${fmtInt(h.qty||0)} 套 · ${esc(h.term||'')}${h.port&&h.term!=='FOB'?' '+esc(h.port):''}${h.custName?' · 客户 '+esc(h.custName):''}</div>
         <div class="h-sub">${h.ts?new Date(h.ts).toLocaleString('zh-CN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}):''}</div>
       </div>
       <button class="h-del" data-i="${i}" type="button">删除</button>
@@ -822,7 +835,7 @@ function renderHistory(){
 let statsShare='';
 function buildStats(){
   const dayKey=t=>{const d=new Date(t);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');};
-  const st={count:0,prodMap:new Map(),termMap:new Map(),custMap:new Map(),todayN:0,todayAmt:0,weekN:0,weekAmt:0,totalAmt:0,priceSum:0,dayCounts:{}};
+  const st={count:0,prodMap:new Map(),termMap:new Map(),custMap:new Map(),custNameMap:new Map(),custN:0,todayN:0,todayAmt:0,weekN:0,weekAmt:0,totalAmt:0,priceSum:0,dayCounts:{}};
   for(let i=0;i<7;i++)st.dayCounts[dayKey(Date.now()-i*864e5)]=0;
   history.forEach(h=>{
     let c={final:0,total:0};
@@ -833,10 +846,13 @@ function buildStats(){
     pc.n++;pc.amt+=c.total;st.prodMap.set(code,pc);
     st.termMap.set(h.term||'',(st.termMap.get(h.term||'')||0)+1);
     st.custMap.set(h.cust||'',(st.custMap.get(h.cust||'')||0)+1);
+    const cn=(h.custName||'').trim();
+    if(cn)st.custNameMap.set(cn,(st.custNameMap.get(cn)||0)+1);
     const k=dayKey(h.ts||Date.now());
     if(k in st.dayCounts){st.dayCounts[k]++;st.weekN++;st.weekAmt+=c.total;}
     if(k===dayKey(Date.now())){st.todayN++;st.todayAmt+=c.total;}
   });
+  st.custN=st.custNameMap.size;
   st.avg=st.count?st.priceSum/st.count:0;
   return st;
 }
@@ -868,6 +884,12 @@ function renderStats(){
   [...st.termMap.entries()].sort((a,b)=>b[1]-a[1]).forEach(([k,n])=>{dist+=distRow(k||'—',n);});
   dist+='<div class="sec-sub">客户类型</div>';
   [...st.custMap.entries()].sort((a,b)=>b[1]-a[1]).forEach(([k,n])=>{dist+=distRow(CUSTS[k]?CUSTS[k].cn:(k||'—'),n);});
+  const named=[...st.custNameMap.entries()].sort((a,b)=>b[1]-a[1]).slice(0,5);
+  if(named.length){
+    dist+='<div class="sec-sub">客户排行</div>';
+    named.forEach(([k,n])=>{dist+=distRow(k,n);});
+    dist+='<div class="sec-sub" style="margin-top:10px">接待客户共 '+st.custN+' 位</div>';
+  }
   $('#stats-dist').innerHTML=dist;
   statsShare=statsShareText(st);
   $('#st-wa').href='https://wa.me/?text='+encodeURIComponent(statsShare);
@@ -881,6 +903,7 @@ function statsShareText(st){
   L.push('近7天 '+st.weekN+' 组 · 累计 '+st.count+' 组，总金额 '+fmtTotal(st.totalAmt));
   const prods=[...st.prodMap.values()].sort((a,b)=>b.n-a.n).slice(0,3);
   if(prods.length)L.push('热门产品：'+prods.map(p=>p.cn+' ×'+p.n).join('、'));
+  if(st.custN)L.push('接待客户 '+st.custN+' 位');
   const terms=[...st.termMap.entries()].sort((a,b)=>b[1]-a[1]);
   if(terms.length)L.push('术语分布：'+terms.map(([k,n])=>(k||'—')+' '+n).join(' / '));
   if(rules.companyName)L.push('—— '+rules.companyName);
@@ -888,10 +911,10 @@ function statsShareText(st){
 }
 function exportCsv(){
   if(!history.length){toast('暂无报价记录');return;}
-  const rows=[['单号','时间','产品编号','产品名称','数量(套)','颜色数','贸易术语','目的港','包装','付款方式','客户类型','单价USD','总金额USD','OEKO-TEX','BSCI','目标价USD']];
+  const rows=[['单号','时间','客户','产品编号','产品名称','数量(套)','颜色数','贸易术语','目的港','包装','付款方式','客户类型','单价USD','总金额USD','OEKO-TEX','BSCI','目标价USD']];
   history.slice().sort((a,b)=>(a.ts||0)-(b.ts||0)).forEach(h=>{
     let c={final:0,total:0};try{c=calcOf(h);}catch(e){}
-    rows.push([h.ref||'',h.ts?new Date(h.ts).toLocaleString('zh-CN'):'',h.product&&h.product.code||'',h.product&&h.product.cn||'',h.qty||0,(h.colors&&h.colors.length)||0,h.term||'',h.term!=='FOB'?(h.port||''):'',PACKS[h.pack]?PACKS[h.pack].cn:(h.pack||''),PAYS[h.pay]?PAYS[h.pay].cn:(h.pay||''),CUSTS[h.cust]?CUSTS[h.cust].cn:(h.cust||''),c.final.toFixed(2),c.total.toFixed(2),h.oeko?'是':'',h.bsci?'是':'',h.target||'']);
+    rows.push([h.ref||'',h.ts?new Date(h.ts).toLocaleString('zh-CN'):'',h.custName||'',h.product&&h.product.code||'',h.product&&h.product.cn||'',h.qty||0,(h.colors&&h.colors.length)||0,h.term||'',h.term!=='FOB'?(h.port||''):'',PACKS[h.pack]?PACKS[h.pack].cn:(h.pack||''),PAYS[h.pay]?PAYS[h.pay].cn:(h.pay||''),CUSTS[h.cust]?CUSTS[h.cust].cn:(h.cust||''),c.final.toFixed(2),c.total.toFixed(2),h.oeko?'是':'',h.bsci?'是':'',h.target||'']);
   });
   const csv='\uFEFF'+rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\r\n');
   const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
@@ -1000,11 +1023,17 @@ async function shareStatsImage(){
   toast('统计图片已生成，可在微信 / 飞书中发送');
 }
 /* 统计卡片图片：调起系统分享面板（面板内可选微信/飞书等应用），不支持时下载图片 */
+function refreshCustList(){
+  const seen=new Set(),opts=[];
+  history.forEach(h=>{const n=(h.custName||'').trim();if(n&&!seen.has(n)){seen.add(n);opts.push(n);}});
+  $('#cust-list').innerHTML=opts.slice(0,20).map(n=>`<option value="${esc(n)}"></option>`).join('');
+}
 function syncSeg(seg){
   $$('#'+seg.id+' button').forEach(x=>x.classList.toggle('active',x.dataset.v===state[seg.dataset.key]));
 }
 function syncForm(){
   $('#qty').value=state.qty;$('#tol').value=String(state.tol);
+  $('#cust').value=state.custName;refreshCustList();
   $('#port').value=state.port;$('#target').value=state.target||'';
   $('#pack').value=state.pack;$('#pay').value=state.pay;
   $$('.seg').forEach(seg=>{if(seg.id!=='seg-view')syncSeg(seg);});
@@ -1034,6 +1063,9 @@ function renderResult(snap){
   $('#res-sub').textContent=`${p.code} · ${p.cn}${p.spec?' · '+p.spec:''}`;
   /* 销售明细 */
   $('#sd-prod').textContent=`${p.cn} · ${p.code}${p.spec?' · '+p.spec:''}`;
+  const custEl=$('#sd-cust');
+  if(snap.custName){custEl.textContent='客户：'+snap.custName;custEl.style.display='inline-block';}
+  else custEl.style.display='none';
   $('#sd-lines').innerHTML=c.lines.map(l=>{
     if(l.first)return `<div class="line base"><span>${esc(l.d)}</span><b>${money(l.v)}</b></div>`;
     if(l.final)return `<div class="line final"><span>参考报价（取整到 $0.05）</span><b>${fmtDelta(l.delta)} → ${money(c.final)}</b></div>`;
@@ -1327,6 +1359,7 @@ function bind(){
     });
   });
   $('#port').addEventListener('input',e=>{state.port=e.target.value;save();updateLive();});
+  $('#cust').addEventListener('input',e=>{state.custName=e.target.value;save();});
   $('#target').addEventListener('input',e=>{state.target=Math.max(0,parseFloat(e.target.value)||0);save();});
   $('#pack').addEventListener('change',e=>{state.pack=e.target.value;save();updateLive();});
   $('#pay').addEventListener('change',e=>{state.pay=e.target.value;save();updateLive();});
