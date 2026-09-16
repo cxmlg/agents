@@ -97,6 +97,7 @@ select,.in-input{border:1px solid #e3e8e6;background:#f4f6f5;border-radius:10px;
 .res-t{flex:1;min-width:0}
 .res-t b{font-size:14px;display:block}
 .res-t span{font-size:11.5px;opacity:.72;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ver{font-style:normal;font-size:10.5px;opacity:.7;font-weight:600;margin-left:6px;vertical-align:2px}
 #seg-view{background:rgba(255,255,255,.16);border-radius:10px;padding:3px;gap:2px;display:flex;flex:none}
 #seg-view button{border:0;background:transparent;color:rgba(255,255,255,.8);padding:6px 11px;border-radius:8px;font-size:12px;font-weight:700}
 #seg-view button.active{background:#fff;color:#0e4f45}
@@ -436,7 +437,7 @@ select,.in-input{border:1px solid #e3e8e6;background:#f4f6f5;border-radius:10px;
   <section id="screen-settings" class="screen">
     <header class="rbar">
       <button id="btn-set-back" type="button">←</button>
-      <div class="res-t"><b>设置</b><span>产品库、价格参数与配置备份（仅存本机）</span></div>
+      <div class="res-t"><b>设置 <i class="ver" id="app-ver"></i></b><span>产品库、价格参数与配置备份（仅存本机）</span></div>
     </header>
     <div class="pane active" style="padding-bottom:40px">
       <div class="card">
@@ -506,6 +507,7 @@ select,.in-input{border:1px solid #e3e8e6;background:#f4f6f5;border-radius:10px;
 
 <script>
 'use strict';
+const APP_VER='1.4';
 const $=s=>document.querySelector(s);
 const $$=s=>Array.from(document.querySelectorAll(s));
 
@@ -1291,6 +1293,7 @@ function bindHold(){
 bind();
 syncForm();
 switchView('cust');
+$('#app-ver').textContent='v'+APP_VER;
 /* PWA：仅 http(s) 下注册离线缓存（file:// 打开时自动跳过） */
 if('serviceWorker' in navigator&&(location.protocol==='https:'||location.hostname==='127.0.0.1'||location.hostname==='localhost')){
   addEventListener('load',()=>{navigator.serviceWorker.register('./sw.js').catch(()=>{});});
