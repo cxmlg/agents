@@ -68,7 +68,7 @@ input,select{font-family:inherit}
 /* ---------- 表单 ---------- */
 .form-card{background:#fff;border-radius:16px;padding:4px 16px 12px}
 .sec-title{font-size:13px;font-weight:800;color:#0e4f45;padding:13px 0 6px;display:flex;align-items:center;gap:6px;letter-spacing:1px}
-.field{padding:11px 0;border-top:1px solid #eef1ef}
+.field{padding:11px 0;border-top:1px solid #e6ebe9}
 .field>label{font-size:12.5px;color:#6b7a77;font-weight:600;display:block;margin-bottom:7px}
 .field>label .sub{font-weight:400;color:#9aa8a4}
 .row{display:flex;gap:8px;align-items:center}
@@ -100,7 +100,8 @@ select,.in-input{border:1px solid #e3e8e6;background:#f4f6f5;border-radius:10px;
 
 /* ---------- 结果页头部 ---------- */
 .rbar{position:sticky;top:0;z-index:6;display:flex;align-items:center;gap:10px;padding:10px 12px;background:#0e4f45;color:#fff}
-#btn-back{border:0;background:rgba(255,255,255,.14);color:#fff;width:34px;height:34px;border-radius:10px;font-size:17px;flex:none}
+.backbtn{border:0;background:rgba(255,255,255,.14);color:#fff;width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex:none;padding:0}
+.backbtn svg{width:18px;height:18px}
 .res-t{flex:1;min-width:0}
 .res-t b{font-size:14px;display:block}
 .res-t span{font-size:11.5px;opacity:.72;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -113,7 +114,7 @@ select,.in-input{border:1px solid #e3e8e6;background:#f4f6f5;border-radius:10px;
 .pane{display:none;padding:14px 16px 34px}
 .pane.active{display:block;animation:fadein .18s ease}
 .card{background:#fff;border-radius:16px;padding:14px 16px;margin-bottom:12px}
-.line{display:flex;justify-content:space-between;gap:10px;padding:8px 0;font-size:13.5px;border-top:1px dashed #e8ecea;align-items:center}
+.line{display:flex;justify-content:space-between;gap:10px;padding:8px 0;font-size:13.5px;border-top:1px dashed #e6ebe9;align-items:center}
 .line:first-child{border-top:0}
 .line i{font-style:normal;color:#8a9995;font-size:11px;display:block}
 .line b.up{color:#c2622a}
@@ -121,7 +122,7 @@ select,.in-input{border:1px solid #e3e8e6;background:#f4f6f5;border-radius:10px;
 .line.base{font-weight:700}
 .sd-cust{display:inline-block;font-size:12px;color:#0e4f45;background:#e9f4f0;border-radius:99px;padding:3px 11px;margin:2px 0 8px;font-weight:700}
 .line.final{background:#f0f7f4;border-radius:10px;padding:10px 12px;font-weight:800;color:#0e4f45;border-top:0;margin-top:4px}
-.sd-total{border-top:1px solid #eef1ef;margin-top:8px;padding-top:10px;font-size:13.5px;color:#3f5350}
+.sd-total{border-top:1px solid #e6ebe9;margin-top:8px;padding-top:10px;font-size:13.5px;color:#3f5350}
 .sd-total b{color:#0e4f45;font-size:16px}
 .sd-note{font-size:11px;color:#93a19d;margin-top:8px;line-height:1.5}
 .tchip{border-radius:12px;padding:11px 14px;font-size:13px;font-weight:600;margin-bottom:12px}
@@ -130,7 +131,7 @@ select,.in-input{border:1px solid #e3e8e6;background:#f4f6f5;border-radius:10px;
 .ghost{display:block;margin:0 auto;background:none;border:0;color:#3f5350;font-size:13px;text-decoration:underline;padding:6px}
 
 /* ---------- 设置页 ---------- */
-.setp{display:flex;gap:8px;align-items:center;padding:11px 0;border-top:1px solid #eef1ef}
+.setp{display:flex;gap:8px;align-items:center;padding:11px 0;border-top:1px solid #e6ebe9}
 .setp:first-child{border-top:0}
 .setp-i{flex:1;min-width:0}
 .setp-i b{font-size:14px;display:block}
@@ -170,7 +171,7 @@ select,.in-input{border:1px solid #e3e8e6;background:#f4f6f5;border-radius:10px;
 .pp-total b{font-size:20px;color:#fff;letter-spacing:.3px}
 .terms{background:#fff;border-radius:16px;padding:2px 16px 6px;margin-bottom:10px}
 .t-head{font-size:11.5px;font-weight:800;color:#177a4b;letter-spacing:1.5px;text-transform:uppercase;padding:12px 0 4px}
-.t-row{display:flex;justify-content:space-between;gap:12px;padding:9.5px 0;border-top:1px solid #f0f3f2;font-size:13.5px}
+.t-row{display:flex;justify-content:space-between;gap:12px;padding:9.5px 0;border-top:1px solid #e6ebe9;font-size:13.5px}
 .t-row span{color:#6b7a77;flex:none}
 .t-row b{font-weight:600;text-align:right}
 .moq{display:flex;align-items:center;gap:8px;background:#e7f4ec;color:#177a4b;border-radius:12px;padding:11px 14px;font-size:13px;font-weight:600;margin-bottom:10px}
@@ -182,8 +183,9 @@ select,.in-input{border:1px solid #e3e8e6;background:#f4f6f5;border-radius:10px;
 .actions svg{width:17px;height:17px;flex:none}
 .a-wa{background:#17954f;color:#fff}
 .a-mail{background:#fff;color:#17211f;border:1px solid #d5dedb}
-.mini-links{display:flex;justify-content:center;gap:18px;margin-bottom:10px}
-.mini-links button{background:none;border:0;color:#12655a;font-size:12.5px;text-decoration:underline;padding:2px}
+.mini-links{display:flex;justify-content:center;align-items:stretch;background:#fff;border-radius:12px;padding:2px 6px;margin-bottom:10px}
+.mini-links button{flex:1;background:none;border:0;color:#12655a;font-size:12.5px;font-weight:600;padding:9px 4px;position:relative;white-space:nowrap}
+.mini-links button+button::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);height:14px;width:1px;background:#dfe5e3}
 .fine{font-size:10.5px;color:#93a19d;text-align:center;line-height:1.5;padding:0 8px}
 
 /* ---------- 按住退出 ---------- */
@@ -230,11 +232,11 @@ select,.in-input{border:1px solid #e3e8e6;background:#f4f6f5;border-radius:10px;
 .tbar{width:72%;max-width:26px;background:#12655a;border-radius:4px 4px 0 0;min-height:3px;opacity:.88}
 .tcol em{font-style:normal;font-size:9px;color:#8a9995;white-space:nowrap}
 .tcol b{font-size:10px;color:#0e4f45}
-.rank{display:flex;align-items:center;gap:8px;padding:8px 0;border-top:1px solid #f0f3f2;font-size:13px}
+.rank{display:flex;align-items:center;gap:8px;padding:8px 0;border-top:1px solid #e6ebe9;font-size:13px}
 .rank:first-child{border-top:0}
 .rank .rname{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.rank .rbar{flex:none;width:96px;height:8px;background:#eef1ef;border-radius:99px;overflow:hidden}
-.rank .rbar i{display:block;height:100%;background:#12655a;border-radius:99px}
+.rank .rbar{flex:none;width:96px;height:8px;background:#e6ebe9;border-radius:99px;overflow:hidden}
+.rank .rbar i{display:block;height:8px;background:#12655a;border-radius:99px}
 .rank .rnum{flex:none;width:92px;text-align:right;font-size:11.5px;color:#6b7a77}
 
 /* ---------- 打印：只输出客户报价 ---------- */
@@ -394,14 +396,14 @@ select,.in-input{border:1px solid #e3e8e6;background:#f4f6f5;border-radius:10px;
 
     <div class="cta">
       <div class="live" id="live"></div>
-      <button id="btn-gen" type="button">生成参考报价 →</button>
+      <button id="btn-gen" class="ibtn" type="button">生成参考报价<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg></button>
     </div>
   </section>
 
   <!-- ================= 结果页：销售明细 / 客户视角 ================= -->
   <section id="screen-result" class="screen">
     <header class="rbar">
-      <button id="btn-back" type="button">←</button>
+      <button id="btn-back" class="backbtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></button>
       <div class="res-t"><b id="res-ref"></b><span id="res-sub"></span></div>
       <div id="seg-view">
         <button type="button" data-v="sales">销售</button>
@@ -470,7 +472,7 @@ select,.in-input{border:1px solid #e3e8e6;background:#f4f6f5;border-radius:10px;
   <!-- ================= 设置页 ================= -->
   <section id="screen-settings" class="screen">
     <header class="rbar">
-      <button id="btn-set-back" type="button">←</button>
+      <button id="btn-set-back" class="backbtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></button>
       <div class="res-t"><b>设置 <i class="ver" id="app-ver"></i></b><span>产品库、价格参数与配置备份（仅存本机）</span></div>
     </header>
     <div class="pane active" style="padding-bottom:40px">
@@ -486,6 +488,8 @@ select,.in-input{border:1px solid #e3e8e6;background:#f4f6f5;border-radius:10px;
               <div class="ritem"><label>成本价 USD（选填·算毛利）</label><input id="pf-cost" type="number" step="0.05" min="0"></div>
               <div class="ritem"><label>中文名</label><input id="pf-cn"></div>
               <div class="ritem"><label>每色 MOQ（套）</label><input id="pf-moq" type="number" step="50" min="1"></div>
+              <div class="ritem"><label>每箱套数</label><input id="pf-csets" type="number" step="1" min="1"></div>
+              <div class="ritem"><label>每箱体积 CBM</label><input id="pf-cbm" type="number" step="0.01" min="0.01"></div>
               <div class="ritem"><label>英文名</label><input id="pf-en"></div>
               <div class="ritem"><label>打样状态</label><input id="pf-sample"></div>
               <div class="ritem"><label>规格（如 60S / 300TC）</label><input id="pf-spec"></div>
@@ -533,7 +537,7 @@ select,.in-input{border:1px solid #e3e8e6;background:#f4f6f5;border-radius:10px;
   <!-- ================= 统计页 ================= -->
   <section id="screen-stats" class="screen">
     <header class="rbar">
-      <button id="btn-stats-back" type="button">←</button>
+      <button id="btn-stats-back" class="backbtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></button>
       <div class="res-t"><b>报价统计</b><span>基于本机报价记录，金额按当前价格参数重算</span></div>
     </header>
     <div class="pane active" style="padding-bottom:40px">
@@ -584,7 +588,7 @@ select,.in-input{border:1px solid #e3e8e6;background:#f4f6f5;border-radius:10px;
 
 <script>
 'use strict';
-const APP_VER='1.9.2';
+const APP_VER='2.0.2';
 const $=s=>document.querySelector(s);
 const $$=s=>Array.from(document.querySelectorAll(s));
 
@@ -592,19 +596,19 @@ const $$=s=>Array.from(document.querySelectorAll(s));
 const DEF_PRODUCTS=[
  {code:'NT-60-0713',cn:'纯棉三件套',en:'100% Cotton Bedding · 3-piece set',spec:'60S / 300TC',
   dimsCn:'被套 200×230cm · 枕套 48×80cm ×2',dimsEn:'Duvet cover 200×230cm · 2 pillowcases 48×80cm',
-  base:13.40,cost:9.80,moqPerColor:500,sample:'有现成打样',tint:'#dfe9e6'},
+  base:13.40,cost:9.80,moqPerColor:500,cartonSets:20,cartonCbm:.22,sample:'有现成打样',tint:'#dfe9e6'},
  {code:'NT-60-0708',cn:'纯棉四件套',en:'100% Cotton Bedding · 4-piece set',spec:'60S / 250TC',
   dimsCn:'被套 200×230cm · 床单 240×250cm · 枕套 48×74cm ×2',dimsEn:'Duvet 200×230cm · flat sheet 240×250cm · 2 pillowcases 48×74cm',
-  base:14.20,cost:10.40,moqPerColor:500,sample:'有现成打样',tint:'#e9e2d6'},
+  base:14.20,cost:10.40,moqPerColor:500,cartonSets:20,cartonCbm:.26,sample:'有现成打样',tint:'#e9e2d6'},
  {code:'NT-40-0321',cn:'涤棉四件套',en:'PC Cotton Bedding · 4-piece set',spec:'40S / 200TC',
   dimsCn:'被套 180×220cm · 床单 230×230cm · 枕套 48×74cm ×2',dimsEn:'Duvet 180×220cm · flat sheet 230×230cm · 2 pillowcases 48×74cm',
-  base:8.80,cost:6.50,moqPerColor:500,sample:'有现成打样',tint:'#e3e6ee'},
+  base:8.80,cost:6.50,moqPerColor:500,cartonSets:24,cartonCbm:.24,sample:'有现成打样',tint:'#e3e6ee'},
  {code:'NT-60-0866',cn:'天丝四件套',en:'Lyocell Bedding · 4-piece set',spec:'60S Lyocell / 300TC',
   dimsCn:'被套 200×230cm · 床单 240×250cm · 枕套 48×74cm ×2',dimsEn:'Duvet 200×230cm · flat sheet 240×250cm · 2 pillowcases 48×74cm',
-  base:17.10,cost:12.60,moqPerColor:400,sample:'打样需 7 天',tint:'#e6e0ec'},
+  base:17.10,cost:12.60,moqPerColor:400,cartonSets:16,cartonCbm:.26,sample:'打样需 7 天',tint:'#e6e0ec'},
  {code:'NT-60-0721',cn:'纯棉床笠四件套',en:'100% Cotton Fitted-sheet Set',spec:'60S / 300TC',
   dimsCn:'床笠 150×200+30cm · 被套 200×230cm · 枕套 48×74cm ×2',dimsEn:'Fitted sheet 150×200+30cm · duvet 200×230cm · 2 pillowcases 48×74cm',
-  base:12.90,cost:9.40,moqPerColor:500,sample:'有现成打样',tint:'#dce7de'}
+  base:12.90,cost:9.40,moqPerColor:500,cartonSets:20,cartonCbm:.24,sample:'有现成打样',tint:'#dce7de'}
 ];
 const TINTS=['#dfe9e6','#e9e2d6','#e3e6ee','#e6e0ec','#dce7de','#eadfe0','#e0e6da','#e8e3d0'];
 const COLORS=[
@@ -630,7 +634,7 @@ const DEF_RULES={
  qty1:.08,qty2:.03,qty3:0,qty4:-.03,qty5:-.06,
  colorExtra:.008,colorCap:.04,
  packCarton:0,packBrand:.25,packWindow:.40,packVacuum:.15,
- cifAdd:.06,ddpAdd:.20,
+ cbm40:68,ocean40:2600,lclRate:70,lclMin:2,insRate:.001,dutyRate:.064,ddpTruck:1100,ddpLclClear:280,
  payTT:0,payPre:-.015,payLC:.01,payDP:.02,
  custNew:0,custRet:-.02,custChain:-.035,
  rushAdd:.04,oekoAdd:.01,
@@ -641,7 +645,8 @@ const RULE_SCHEMA=[
  {sec:'数量档调价（%）',items:[['qty1','< 1,000 套'],['qty2','1,000–2,999'],['qty3','3,000–4,999'],['qty4','5,000–9,999'],['qty5','≥ 10,000']]},
  {sec:'颜色',items:[['colorExtra','超过 3 色 · 每色加 %'],['colorCap','多色加价上限 %']]},
  {sec:'包装加价（USD/套）',type:'usd',items:[['packCarton','出口纸箱'],['packBrand','品牌彩盒'],['packWindow','彩盒+开窗'],['packVacuum','真空压缩袋']]},
- {sec:'贸易术语加收（%）',items:[['cifAdd','CIF（海运+保险）'],['ddpAdd','DDP（海运+关税+派送）']]},
+ {sec:'海运费（CIF/DDP 成本构成）',type:'num',items:[['cbm40','40HQ 可用体积 CBM'],['ocean40','海运费 USD/40HQ'],['lclRate','LCL 海运 USD/CBM'],['lclMin','LCL 最低计费 CBM'],['ddpTruck','清关派送 USD/柜'],['ddpLclClear','LCL 清关派送 USD/票']]},
+ {sec:'保险与关税（%）',items:[['insRate','保险费率 %（110%投保）'],['dutyRate','关税率 %']]},
  {sec:'付款方式调价（%）',items:[['payTT','T/T 30/70'],['payPre','T/T 100% 预付'],['payLC','L/C 即期'],['payDP','D/P 即期']]},
  {sec:'客户与认证（%）',items:[['custNew','新客'],['custRet','老客返单'],['custChain','连锁大客户'],['rushAdd','加急交期加价'],['oekoAdd','OEKO-TEX 加收']]},
  {sec:'交期（天）',type:'day',items:[['sNormal','打样 · 正常'],['pNormal','量产 · 正常'],['sRush','打样 · 加急'],['pRush','量产 · 加急'],['validDays','报价有效期']]},
@@ -697,6 +702,8 @@ function sanitizeProduct(p){
     dimsEn:String(p.dimsEn||'').trim(),
     base:Math.max(.5,parseFloat(p.base)||0),
     cost:(isFinite(cost)&&cost>0)?Math.round(cost*100)/100:null,
+    cartonSets:Math.max(1,Math.min(2000,parseInt(p.cartonSets)||20)),
+    cartonCbm:Math.max(.01,Math.min(10,parseFloat(p.cartonCbm)||.24)),
     moqPerColor:Math.max(1,parseInt(p.moqPerColor)||500),
     sample:String(p.sample||'').trim()||'有现成打样',
     tint:String(p.tint||'').trim()||TINTS[code.length%TINTS.length],
@@ -770,10 +777,25 @@ function calcOf(s){
    lines.push({t:'颜色',d:`${nC} 色${ca?'（多色染色分摊）':''}`,delta:nv-v});v=nv;}
   const pa=R[PACKS[s.pack].rk]||0;
   lines.push({t:'包装',d:PACKS[s.pack].cn,delta:pa});v+=pa;
-  const tm=s.term==='CIF'?1+R.cifAdd:s.term==='DDP'?1+R.ddpAdd:1;
-  if(tm!==1){const nv=v*tm;
-    lines.push({t:'贸易术语',d:`${s.term}${s.port&&s.port.trim()?' · '+s.port.trim().toUpperCase():''}（${s.term==='CIF'?'海运 + 保险':'海运 + 关税 + 末端派送'}）`,delta:nv-v});v=nv;}
-  else lines.push({t:'贸易术语',d:'FOB（口岸船上交货）',delta:0});
+  /* 海运/保险/关税/派送按成本项实算：整柜按柜摊销，拼箱按 CBM 计费 */
+  const cs=p.cartonSets||20,cc=p.cartonCbm||.24,qq=Math.max(1,q);
+  const totalCbm=q/cs*cc;
+  let containers=0,mode='LCL',seaPerSet=0;
+  if(totalCbm>=R.cbm40*.7){containers=Math.ceil(totalCbm/R.cbm40);seaPerSet=containers*R.ocean40/qq;mode='FCL';}
+  else if(totalCbm>0){seaPerSet=Math.max(totalCbm,R.lclMin)*R.lclRate/qq;}
+  if(s.term==='CIF'||s.term==='DDP'){
+    if(seaPerSet>.005){const nv=v+seaPerSet;
+      lines.push({t:'海运费',d:(mode==='FCL'?`${containers} × 40HQ（$${fmtInt(R.ocean40)}/柜）`:`LCL ${Math.round(totalCbm*10)/10} CBM × $${R.lclRate}/CBM`),delta:nv-v});v=nv;}
+    const ins=v*1.1*R.insRate;
+    if(ins>.005){const nv=v+ins;lines.push({t:'保险费',d:'投保 110% × 费率 '+(Math.round(R.insRate*100000)/1000)+'%',delta:nv-v});v=nv;}
+  }
+  if(s.term==='DDP'){
+    const duty=v*R.dutyRate;
+    if(duty>.005){const nv=v+duty;lines.push({t:'关税',d:'税率 '+(Math.round(R.dutyRate*100000)/1000)+'% × CIF 值',delta:nv-v});v=nv;}
+    const end=mode==='FCL'?containers*R.ddpTruck/qq:R.ddpLclClear/qq;
+    if(end>.005){const nv=v+end;lines.push({t:'清关派送',d:(mode==='FCL'?`$${fmtInt(R.ddpTruck)}/柜 × ${containers}`:`$${R.ddpLclClear}/票`)+' ÷ '+fmtInt(q)+' 套',delta:nv-v});v=nv;}
+  }
+  if(s.term==='FOB')lines.push({t:'贸易术语',d:'FOB（口岸船上交货，不含海运/保险/关税）',delta:0});
   const paj=R[PAYS[s.pay].rk]||0;
   if(paj){const nv=v*(1+paj);lines.push({t:'付款',d:PAYS[s.pay].cn,delta:nv-v});v=nv;}
   else lines.push({t:'付款',d:PAYS[s.pay].cn,delta:0});
@@ -1172,7 +1194,7 @@ function renderRulesBox(){
     return `<div class="sec-sub">${g.sec}</div><div class="rgrid">${g.items.map(([k,label])=>{
       const input=type==='txt'
         ?`<input type="text" data-k="${k}" data-t="txt" value="${esc(rules[k]||'')}">`
-        :`<input type="number" inputmode="decimal" step="${type==='day'?1:0.1}" data-k="${k}" data-t="${type}" value="${Math.round((type==='pct'?rules[k]*100:rules[k])*100)/100}">`;
+        :`<input type="number" inputmode="decimal" step="${(type==='day'||type==='num')?1:0.1}" data-k="${k}" data-t="${type}" value="${Math.round((type==='pct'?rules[k]*100:rules[k])*100)/100}">`;
       return `<div class="ritem"><label>${label}</label>${input}</div>`;
     }).join('')}</div>`;
   }).join('');
@@ -1183,6 +1205,8 @@ function openProductForm(code){
   $('#pf-code').value=p?p.code:'';
   $('#pf-base').value=p?p.base:'';
   $('#pf-cost').value=p&&p.cost?p.cost:'';
+  $('#pf-csets').value=p?(p.cartonSets||20):20;
+  $('#pf-cbm').value=p&&p.cartonCbm?p.cartonCbm:'';
   $('#pf-cn').value=p?p.cn:'';
   $('#pf-moq').value=p?p.moqPerColor:500;
   $('#pf-en').value=p?p.en:'';
@@ -1235,6 +1259,7 @@ function saveProductForm(){
   const tint=idx>=0?products[idx].tint:TINTS[products.length%TINTS.length];
   const obj=sanitizeProduct({
     code,base,cost:$('#pf-cost').value,moqPerColor:$('#pf-moq').value,tint,
+    cartonSets:$('#pf-csets').value,cartonCbm:$('#pf-cbm').value,
     cn:$('#pf-cn').value,en:$('#pf-en').value,spec:$('#pf-spec').value,
     dimsCn:$('#pf-dimscn').value,dimsEn:$('#pf-dimsen').value,sample:$('#pf-sample').value,
     img:pendingImg
@@ -1418,6 +1443,7 @@ function bind(){
     if(t==='txt')rules[k]=inp.value.slice(0,60);
     else if(t==='pct')rules[k]=Math.max(-.9,Math.min(.9,isFinite(num)?num/100:0));
     else if(t==='day')rules[k]=Math.max(1,Math.min(365,isFinite(num)?Math.round(num):30));
+    else if(t==='num')rules[k]=Math.max(0,Math.min(100000,isFinite(num)?num:0));
     else rules[k]=Math.max(0,Math.min(50,isFinite(num)?num:0));
     saveRules();updateLive();
   });
