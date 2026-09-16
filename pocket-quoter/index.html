@@ -8,6 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>展会口袋报价器</title>
 <link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/svg+xml" href="icons/icon.svg">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -25,7 +26,10 @@ input,select{font-family:inherit}
 .brand-row{display:flex;align-items:center;gap:10px}
 .brand{font-size:19px;font-weight:800;display:flex;gap:9px;align-items:center;letter-spacing:.5px;flex:1}
 .logo{width:27px;height:27px;border-radius:8px;background:#fff;color:#0e4f45;display:grid;place-items:center;font-size:15px;flex:none}
-.gear{flex:none;border:0;background:rgba(255,255,255,.14);color:#fff;height:32px;padding:0 12px;border-radius:99px;font-size:12.5px;font-weight:600}
+.gear{flex:none;border:0;background:rgba(255,255,255,.14);color:#fff;height:32px;padding:0 12px;border-radius:99px;font-size:12.5px;font-weight:600;display:flex;align-items:center;gap:5px}
+.gear svg{width:14px;height:14px;flex:none}
+.ibtn{display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.ibtn svg{width:16px;height:16px;flex:none}
 .tagline{margin:5px 0 0 36px;font-size:12px;opacity:.72;letter-spacing:1px}
 .tabs{display:flex;background:rgba(255,255,255,.13);border-radius:12px;padding:4px;margin:14px 0 0}
 .tabs button{flex:1;border:0;background:transparent;color:#fff;opacity:.65;padding:8px 0;border-radius:9px;font-size:13.5px;font-weight:600}
@@ -258,7 +262,7 @@ select,.in-input{border:1px solid #e3e8e6;background:#f4f6f5;border-radius:10px;
     <header class="topbar">
       <div class="brand-row">
         <div class="brand"><span class="logo">报</span>展会口袋报价器</div>
-        <button id="btn-settings" class="gear" type="button">⚙ 设置</button>
+        <button id="btn-settings" class="gear" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>设置</button>
       </div>
       <div class="tagline">扫样品 · 现报价 · 当场给客户看</div>
       <nav class="tabs" id="tabs">
@@ -280,14 +284,14 @@ select,.in-input{border:1px solid #e3e8e6;background:#f4f6f5;border-radius:10px;
           <button id="code-find" type="button">查找</button>
         </div>
         <div class="scan-row">
-          <button id="btn-scan" type="button">📷 扫样品条码</button>
+          <button id="btn-scan" class="ibtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><path d="M7 12h10"/></svg>扫样品条码</button>
           <span id="scan-note">支持条码 / 二维码</span>
         </div>
         <div class="hint">编号见样品卡 / 展会排产表，也可直接扫样品卡上的码</div>
       </div>
 
       <div id="tab-hist" hidden>
-        <button class="bigbtn" id="btn-stats" type="button">📊 报价统计与分享</button>
+        <button class="bigbtn ibtn" id="btn-stats" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M8 17v-6"/><path d="M13 17V7"/><path d="M18 17v-3"/></svg>报价统计与分享</button>
         <div id="hist-list"></div>
         <div class="hint">点按任意记录可重新打开该报价并再次发送</div>
       </div>
@@ -491,7 +495,7 @@ select,.in-input{border:1px solid #e3e8e6;background:#f4f6f5;border-radius:10px;
                 <img id="pf-img-preview" alt="" hidden>
                 <div class="pf-img-btns">
                   <div>
-                    <button class="sbtn" id="pf-img-pick" type="button">📷 选择 / 拍摄图片</button>
+                    <button class="sbtn ibtn" id="pf-img-pick" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>选择 / 拍摄</button>
                     <button class="sbtn danger" id="pf-img-clear" type="button">移除</button>
                   </div>
                   <span class="sd-note" style="margin:0">自动压缩后只存本机，约 10–20KB/张</span>
@@ -575,12 +579,12 @@ select,.in-input{border:1px solid #e3e8e6;background:#f4f6f5;border-radius:10px;
   <div class="scan-frame"><video id="scan-video" autoplay playsinline muted></video></div>
   <div class="scan-tip">对准样品卡上的条码 / 二维码</div>
   <div class="scan-err" id="scan-err" hidden></div>
-  <button id="scan-close" type="button">✕ 关闭相机</button>
+  <button id="scan-close" class="ibtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="width:14px;height:14px"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg>关闭相机</button>
 </div>
 
 <script>
 'use strict';
-const APP_VER='1.9.1';
+const APP_VER='1.9.2';
 const $=s=>document.querySelector(s);
 const $$=s=>Array.from(document.querySelectorAll(s));
 
@@ -898,7 +902,7 @@ function renderStats(){
 }
 function statsShareText(st){
   const d=new Date(),L=[];
-  L.push('📊 展会报价统计 '+(d.getMonth()+1)+'月'+d.getDate()+'日');
+  L.push('展会报价统计 '+(d.getMonth()+1)+'月'+d.getDate()+'日');
   L.push('今日报价 '+st.todayN+' 组，意向金额 '+fmtTotal(st.todayAmt));
   L.push('近7天 '+st.weekN+' 组 · 累计 '+st.count+' 组，总金额 '+fmtTotal(st.totalAmt));
   const prods=[...st.prodMap.values()].sort((a,b)=>b.n-a.n).slice(0,3);
