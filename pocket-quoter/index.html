@@ -197,6 +197,7 @@ select,.in-input{border:1px solid #e3e8e6;background:#f4f6f5;border-radius:10px;
 .scan-frame{position:relative}
 .scan-frame::after{content:'';position:absolute;inset:8%;border:2px solid rgba(255,255,255,.5);border-radius:12px;pointer-events:none}
 .scan-tip{color:#cfe5de;font-size:13px;letter-spacing:1px}
+.scan-err{max-width:82%;background:#5c1f12;color:#ffd9cc;border-radius:12px;padding:10px 14px;font-size:12.5px;line-height:1.55;text-align:center}
 #scan-close{border:0;background:rgba(255,255,255,.16);color:#fff;border-radius:99px;padding:10px 22px;font-size:14px;font-weight:700}
 
 /* ---------- 产品图片 / 成本毛利 ---------- */
@@ -499,6 +500,7 @@ select,.in-input{border:1px solid #e3e8e6;background:#f4f6f5;border-radius:10px;
 <div id="scan-overlay" hidden>
   <div class="scan-frame"><video id="scan-video" autoplay playsinline muted></video></div>
   <div class="scan-tip">对准样品卡上的条码 / 二维码</div>
+  <div class="scan-err" id="scan-err" hidden></div>
   <button id="scan-close" type="button">✕ 关闭相机</button>
 </div>
 
@@ -1147,37 +1149,112 @@ function bind(){
 }
 /* ---------- 扫样品码 ---------- */
 let scanStream=null,scanTimer=null;
+function loadScript(src){
+  return new Promise(res=>{
+    const s=document.createElement('script');
+    s.src=src;s.onload=()=>res(true);s.onerror=()=>res(false);
+    document.head.appendChild(s);
+  });
+}
+/* ZXing 降级：iPhone Safari 等无 BarcodeDetector 的浏览器 */
+let zxingReader=null,zxingHints=null;
+function zxingSetup(){
+  if(zxingReader)return true;
+  const Z=window.ZXing;
+  if(!Z||!Z.MultiFormatReader||!Z.HTMLCanvasElementLuminanceSource||!Z.HybridBinarizer||!Z.BinaryBitmap)return false;
+  zxingHints=new Map();
+  zxingHints.set(Z.DecodeHintType.POSSIBLE_FORMATS,[Z.BarcodeFormat.QR_CODE,Z.BarcodeFormat.EAN_13,Z.BarcodeFormat.EAN_8,Z.BarcodeFormat.CODE_128,Z.BarcodeFormat.CODE_39,Z.BarcodeFormat.UPC_A,Z.BarcodeFormat.UPC_E,Z.BarcodeFormat.ITF]);
+  zxingReader=new Z.MultiFormatReader();
+  zxingReader.setHints(zxingHints);
+  return true;
+}
+function zxingDecodeCanvas(canvas){
+  try{
+    const Z=window.ZXing;
+    const bmp=new Z.BinaryBitmap(new Z.HybridBinarizer(new Z.HTMLCanvasElementLuminanceSource(canvas)));
+    const res=zxingReader.decode(bmp,zxingHints);
+    zxingReader.reset();
+    return res&&res.getText?res.getText():null;
+  }catch(e){/* 本帧无码或解码失败，继续下一帧 */}
+  return null;
+}
+function scanFound(val){
+  stopScan();
+  showScreen('screen-home');
+  state.tab='code';save();syncForm();
+  $('#code-input').value=val;
+  findCode();
+}
+function showScanErr(msg){
+  const el=$('#scan-err');
+  el.textContent=msg;
+  el.hidden=false;
+  $('#scan-overlay').hidden=false;
+}
 async function startScan(){
   if(scanStream)return;
-  if(!('BarcodeDetector' in window)){
-    $('#scan-note').textContent='此浏览器不支持扫码，请手动输入编号';
-    toast('此浏览器不支持扫码，请手动输入编号');
+  $('#scan-err').hidden=true;
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){
+    showScanErr('当前页面不是 HTTPS，无法调用相机。请通过 https:// 地址访问后再试');
     return;
   }
+  let detector=null;
+  if('BarcodeDetector' in window){
+    try{
+      detector=new BarcodeDetector({formats:['ean_13','ean_8','code_128','code_39','upc_a','upc_e','qr_code']});
+    }catch(e){detector=new BarcodeDetector();}
+  }else{
+    $('#scan-note').textContent='正在加载扫码组件…';
+    const ok=await loadScript('./vendor/zxing.min.js');
+    if(!ok||!window.ZXing){showScanErr('扫码组件加载失败：请确认部署时包含 vendor/zxing.min.js 文件后强刷页面');return;}
+    if(!zxingSetup()){showScanErr('扫码组件初始化失败，请手动输入编号');return;}
+  }
+  $('#scan-note').textContent='正在打开相机，请在弹窗中允许访问…';
+  let stream;
   try{
-    scanStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});
+    stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}},audio:false});
   }catch(e){
-    toast('无法打开相机：'+(e.name==='NotAllowedError'?'未授权相机权限':'请检查设备'));
+    let m='无法打开相机：';
+    if(e&&(e.name==='NotAllowedError'||e.name==='PermissionDeniedError'))
+      m+='相机权限被拒绝。请在 iPhone 设置 → App → Safari → 相机 里改为允许；或删除该网页的摄像头权限后刷新重试';
+    else if(e&&e.name==='NotFoundError') m+='未找到可用相机';
+    else if(e&&e.name==='NotReadableError') m+='相机被其他应用占用';
+    else m+=(e&&e.name?e.name:'未知错误');
+    showScanErr(m);
     return;
   }
+  scanStream=stream;
+  /* iOS 关键：先把遮罩显示出来再接视频流，顺序反了会一直黑屏 */
   const video=$('#scan-video');
-  video.srcObject=scanStream;
   $('#scan-overlay').hidden=false;
-  try{await video.play();}catch(e){}
-  let detector;
+  $('#scan-err').hidden=true;
+  video.srcObject=scanStream;
   try{
-    detector=new BarcodeDetector({formats:['ean_13','ean_8','code_128','code_39','upc_a','upc_e','qr_code']});
-  }catch(e){detector=new BarcodeDetector();}
+    await new Promise(res=>{
+      if(video.readyState>=1)return res();
+      video.onloadedmetadata=()=>res();
+      setTimeout(res,2000);
+    });
+    await video.play();
+  }catch(e){}
+  $('#scan-note').textContent='对准样品卡上的条码 / 二维码';
+  const canvas=document.createElement('canvas');
   const tick=async()=>{
     if(!scanStream)return;
     try{
-      const codes=await detector.detect(video);
-      if(codes&&codes.length){
-        const val=(codes[0].rawValue||'').trim();
-        if(val){stopScan();showScreen('screen-home');state.tab='code';save();syncForm();$('#code-input').value=val;findCode();}
+      let val=null;
+      if(detector){
+        const codes=await detector.detect(video);
+        if(codes&&codes.length)val=(codes[0].rawValue||'').trim();
+      }else if(video.videoWidth){
+        const w=480,h=Math.max(1,Math.round(video.videoHeight/video.videoWidth*480));
+        canvas.width=w;canvas.height=h;
+        canvas.getContext('2d').drawImage(video,0,0,w,h);
+        val=(zxingDecodeCanvas(canvas)||'').trim();
       }
+      if(val){scanFound(val);return;}
     }catch(e){}
-    if(scanStream)scanTimer=setTimeout(tick,300);
+    if(scanStream)scanTimer=setTimeout(tick,350);
   };
   tick();
 }
@@ -1187,6 +1264,7 @@ function stopScan(){
   clearTimeout(scanTimer);scanTimer=null;
   $('#scan-video').srcObject=null;
   $('#scan-overlay').hidden=true;
+  $('#scan-err').hidden=true;
 }
 function bindHold(){
   const hold=$('#hold'),fill=hold.querySelector('.fill');
