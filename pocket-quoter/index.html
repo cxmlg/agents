@@ -211,6 +211,24 @@ select,.in-input{border:1px solid #e3e8e6;background:#f4f6f5;border-radius:10px;
 .cv-co{text-align:center;font-size:13px;font-weight:800;color:#0e4f45;letter-spacing:2px;margin-bottom:8px;text-transform:uppercase}
 .print-head{display:none}
 
+/* ---------- 报价统计 ---------- */
+.bigbtn{width:100%;border:0;background:#fff;color:#0e4f45;border-radius:12px;padding:12px 0;font-size:14px;font-weight:800;box-shadow:0 1px 6px rgba(14,79,69,.12);margin-bottom:12px;letter-spacing:.5px}
+.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.scell{background:#f6f8f7;border:1px solid #e3e8e6;border-radius:12px;padding:10px 12px}
+.scell b{display:block;font-size:18px;color:#0e4f45;letter-spacing:-.3px;margin-top:2px}
+.scell span{font-size:11px;color:#6b7a77}
+.trend{display:flex;align-items:flex-end;gap:6px;height:96px;padding:6px 2px 0}
+.tcol{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;height:100%;justify-content:flex-end}
+.tbar{width:72%;max-width:26px;background:#12655a;border-radius:4px 4px 0 0;min-height:3px;opacity:.88}
+.tcol em{font-style:normal;font-size:9px;color:#8a9995;white-space:nowrap}
+.tcol b{font-size:10px;color:#0e4f45}
+.rank{display:flex;align-items:center;gap:8px;padding:8px 0;border-top:1px solid #f0f3f2;font-size:13px}
+.rank:first-child{border-top:0}
+.rank .rname{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rank .rbar{flex:none;width:96px;height:8px;background:#eef1ef;border-radius:99px;overflow:hidden}
+.rank .rbar i{display:block;height:100%;background:#12655a;border-radius:99px}
+.rank .rnum{flex:none;width:92px;text-align:right;font-size:11.5px;color:#6b7a77}
+
 /* ---------- 打印：只输出客户报价 ---------- */
 @media print{
  body{background:#fff}
@@ -265,6 +283,7 @@ select,.in-input{border:1px solid #e3e8e6;background:#f4f6f5;border-radius:10px;
       </div>
 
       <div id="tab-hist" hidden>
+        <button class="bigbtn" id="btn-stats" type="button">📊 报价统计与分享</button>
         <div id="hist-list"></div>
         <div class="hint">点按任意记录可重新打开该报价并再次发送</div>
       </div>
@@ -496,6 +515,49 @@ select,.in-input{border:1px solid #e3e8e6;background:#f4f6f5;border-radius:10px;
     </div>
   </section>
 
+  <!-- ================= 统计页 ================= -->
+  <section id="screen-stats" class="screen">
+    <header class="rbar">
+      <button id="btn-stats-back" type="button">←</button>
+      <div class="res-t"><b>报价统计</b><span>基于本机报价记录，金额按当前价格参数重算</span></div>
+    </header>
+    <div class="pane active" style="padding-bottom:40px">
+      <div class="sgrid" id="stats-overview"></div>
+      <div class="card">
+        <div class="sec-title">▍近 7 天报价次数</div>
+        <div class="trend" id="stats-trend"></div>
+      </div>
+      <div class="card">
+        <div class="sec-title">▍产品排行</div>
+        <div id="stats-rank"></div>
+      </div>
+      <div class="card">
+        <div class="sec-title">▍贸易术语 / 客户类型</div>
+        <div id="stats-dist"></div>
+      </div>
+      <div class="card">
+        <div class="sec-title">▍分享统计摘要</div>
+        <div class="actions">
+          <a id="st-wa" class="a-wa" target="_blank" rel="noopener" href="#">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3a9 9 0 0 0-7.9 13.3L3 21l4.8-1.1A9 9 0 1 0 12 3zm4.2 12.2c-.2.6-1.2 1.1-1.7 1.1-.4.1-1 .1-1.6-.1a13 13 0 0 1-5.8-5.1c-.6-1-.9-2-.7-2.8.1-.5.6-1.3 1.1-1.5.3-.1.7-.1.9.2l.9 1.5c.1.3.1.5-.1.7l-.5.6c-.2.2-.2.4-.1.6.5.9 1.7 2.1 2.7 2.6.2.1.4.1.6-.1l.6-.6c.2-.2.4-.2.7-.1l1.5.8c.3.2.5.5.5.8 0 .3 0 .6-.1.9z"/></svg>
+            WhatsApp
+          </a>
+          <a id="st-mail" class="a-mail" href="#">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
+            Email
+          </a>
+        </div>
+        <div class="mini-links">
+          <button id="st-copy" type="button">复制摘要</button>
+          <button id="st-more" type="button">更多分享</button>
+          <button id="st-img" type="button">生成图片</button>
+          <button id="st-csv" type="button">导出 CSV</button>
+        </div>
+        <div class="fine">* CSV 可用 Excel 打开，方便回录入 ERP；摘要为中文统计，适合发内部群</div>
+      </div>
+    </div>
+  </section>
+
 </div>
 <div id="toast"></div>
 <div id="scan-overlay" hidden>
@@ -507,7 +569,7 @@ select,.in-input{border:1px solid #e3e8e6;background:#f4f6f5;border-radius:10px;
 
 <script>
 'use strict';
-const APP_VER='1.4';
+const APP_VER='1.8';
 const $=s=>document.querySelector(s);
 const $$=s=>Array.from(document.querySelectorAll(s));
 
@@ -653,6 +715,16 @@ function thumb(tint){
 }
 let toastTimer=null;
 function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),1800);}
+function copyText(txt,okMsg){
+  const ok=()=>toast(okMsg);
+  const fallback=()=>{
+    const ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();
+    try{document.execCommand('copy');ok();}catch(e){toast('复制失败，请手动选择');}
+    ta.remove();
+  };
+  if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(txt).then(ok).catch(fallback);
+  else fallback();
+}
 function makeRef(){
   const d=new Date(),y=String(d.getFullYear()).slice(2),m=String(d.getMonth()+1).padStart(2,'0'),dd=String(d.getDate()).padStart(2,'0');
   let seq=1;const k='pqs-seq-'+y+m+dd;
@@ -746,6 +818,188 @@ function renderHistory(){
       <button class="h-del" data-i="${i}" type="button">删除</button>
     </div>`;}).join(''):'<div class="hint">还没有报价记录，回「已排产品库」生成第一张报价吧</div>';
 }
+/* ================= 报价统计与分享 ================= */
+let statsShare='';
+function buildStats(){
+  const dayKey=t=>{const d=new Date(t);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');};
+  const st={count:0,prodMap:new Map(),termMap:new Map(),custMap:new Map(),todayN:0,todayAmt:0,weekN:0,weekAmt:0,totalAmt:0,priceSum:0,dayCounts:{}};
+  for(let i=0;i<7;i++)st.dayCounts[dayKey(Date.now()-i*864e5)]=0;
+  history.forEach(h=>{
+    let c={final:0,total:0};
+    try{c=calcOf(h);}catch(e){}
+    st.count++;st.priceSum+=c.final;st.totalAmt+=c.total;
+    const code=(h.product&&h.product.code)||'?';
+    const pc=st.prodMap.get(code)||{cn:(h.product&&h.product.cn)||'?',n:0,amt:0};
+    pc.n++;pc.amt+=c.total;st.prodMap.set(code,pc);
+    st.termMap.set(h.term||'',(st.termMap.get(h.term||'')||0)+1);
+    st.custMap.set(h.cust||'',(st.custMap.get(h.cust||'')||0)+1);
+    const k=dayKey(h.ts||Date.now());
+    if(k in st.dayCounts){st.dayCounts[k]++;st.weekN++;st.weekAmt+=c.total;}
+    if(k===dayKey(Date.now())){st.todayN++;st.todayAmt+=c.total;}
+  });
+  st.avg=st.count?st.priceSum/st.count:0;
+  return st;
+}
+function renderStats(){
+  const st=buildStats();
+  if(!st.count){
+    $('#stats-overview').innerHTML='<div class="scell" style="grid-column:1 / -1"><span>还没有报价记录，回首页生成报价后这里会出现统计</span><b>—</b></div>';
+    $('#stats-trend').innerHTML='';
+    $('#stats-rank').innerHTML='<div class="hint" style="margin:0">暂无数据</div>';
+    $('#stats-dist').innerHTML='<div class="hint" style="margin:0">暂无数据</div>';
+    statsShare='';
+    $('#st-wa').removeAttribute('href');$('#st-mail').removeAttribute('href');
+    return st;
+  }
+  $('#stats-overview').innerHTML=[
+    ['累计报价',st.count+' 组'],['报价总金额',fmtTotal(st.totalAmt)],
+    ['今日',st.todayN+' 组 · '+fmtTotal(st.todayAmt)],['近 7 天',st.weekN+' 组 · '+fmtTotal(st.weekAmt)]
+  ].map(c=>`<div class="scell"><span>${c[0]}</span><b>${c[1]}</b></div>`).join('');
+  const keys=Object.keys(st.dayCounts),max=Math.max(1,...keys.map(k=>st.dayCounts[k]));
+  $('#stats-trend').innerHTML=keys.map(k=>{
+    const n=st.dayCounts[k];
+    return `<div class="tcol">${n?`<b>${n}</b>`:''}<div class="tbar" style="height:${Math.max(4,n/max*100)}%"></div><em>${k.slice(5)}</em></div>`;
+  }).join('');
+  const prods=[...st.prodMap.values()].sort((a,b)=>b.n-a.n).slice(0,5);
+  const pmax=Math.max(...prods.map(p=>p.n));
+  $('#stats-rank').innerHTML=prods.map(p=>`<div class="rank"><span class="rname">${esc(p.cn)}</span><span class="rbar"><i style="width:${Math.round(p.n/pmax*100)}%"></i></span><span class="rnum">${p.n} 组 · ${fmtTotal(p.amt)}</span></div>`).join('');
+  const distRow=(label,n)=>`<div class="rank"><span class="rname">${esc(label)}</span><span class="rbar"><i style="width:${Math.round(n/st.count*100)}%"></i></span><span class="rnum">${n} 组 · ${Math.round(n/st.count*100)}%</span></div>`;
+  let dist='<div class="sec-sub">贸易术语</div>';
+  [...st.termMap.entries()].sort((a,b)=>b[1]-a[1]).forEach(([k,n])=>{dist+=distRow(k||'—',n);});
+  dist+='<div class="sec-sub">客户类型</div>';
+  [...st.custMap.entries()].sort((a,b)=>b[1]-a[1]).forEach(([k,n])=>{dist+=distRow(CUSTS[k]?CUSTS[k].cn:(k||'—'),n);});
+  $('#stats-dist').innerHTML=dist;
+  statsShare=statsShareText(st);
+  $('#st-wa').href='https://wa.me/?text='+encodeURIComponent(statsShare);
+  $('#st-mail').href='mailto:?subject='+encodeURIComponent('展会报价统计 '+(new Date().getMonth()+1)+'月'+new Date().getDate()+'日')+'&body='+encodeURIComponent(statsShare);
+  return st;
+}
+function statsShareText(st){
+  const d=new Date(),L=[];
+  L.push('📊 展会报价统计 '+(d.getMonth()+1)+'月'+d.getDate()+'日');
+  L.push('今日报价 '+st.todayN+' 组，意向金额 '+fmtTotal(st.todayAmt));
+  L.push('近7天 '+st.weekN+' 组 · 累计 '+st.count+' 组，总金额 '+fmtTotal(st.totalAmt));
+  const prods=[...st.prodMap.values()].sort((a,b)=>b.n-a.n).slice(0,3);
+  if(prods.length)L.push('热门产品：'+prods.map(p=>p.cn+' ×'+p.n).join('、'));
+  const terms=[...st.termMap.entries()].sort((a,b)=>b[1]-a[1]);
+  if(terms.length)L.push('术语分布：'+terms.map(([k,n])=>(k||'—')+' '+n).join(' / '));
+  if(rules.companyName)L.push('—— '+rules.companyName);
+  return L.join('\n');
+}
+function exportCsv(){
+  if(!history.length){toast('暂无报价记录');return;}
+  const rows=[['单号','时间','产品编号','产品名称','数量(套)','颜色数','贸易术语','目的港','包装','付款方式','客户类型','单价USD','总金额USD','OEKO-TEX','BSCI','目标价USD']];
+  history.slice().sort((a,b)=>(a.ts||0)-(b.ts||0)).forEach(h=>{
+    let c={final:0,total:0};try{c=calcOf(h);}catch(e){}
+    rows.push([h.ref||'',h.ts?new Date(h.ts).toLocaleString('zh-CN'):'',h.product&&h.product.code||'',h.product&&h.product.cn||'',h.qty||0,(h.colors&&h.colors.length)||0,h.term||'',h.term!=='FOB'?(h.port||''):'',PACKS[h.pack]?PACKS[h.pack].cn:(h.pack||''),PAYS[h.pay]?PAYS[h.pay].cn:(h.pay||''),CUSTS[h.cust]?CUSTS[h.cust].cn:(h.cust||''),c.final.toFixed(2),c.total.toFixed(2),h.oeko?'是':'',h.bsci?'是':'',h.target||'']);
+  });
+  const csv='\uFEFF'+rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\r\n');
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='quoter-records-'+new Date().toISOString().slice(0,10).replace(/-/g,'')+'.csv';
+  document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href),3000);
+  toast('已导出 '+history.length+' 条报价记录');
+}
+/* 统计卡片图片：微信/飞书更适合发图，也可通过系统分享面板直接选应用 */
+function rrPath(ctx,x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);
+  ctx.arcTo(x+w,y,x+w,y+h,r);
+  ctx.arcTo(x+w,y+h,x,y+h,r);
+  ctx.arcTo(x,y+h,x,y,r);
+  ctx.arcTo(x,y,x+w,y,r);
+  ctx.closePath();
+}
+function makeStatsImage(st){
+  const W=750,pad=40;
+  const prods=[...st.prodMap.values()].sort((a,b)=>b.n-a.n).slice(0,3);
+  const H=770+prods.length*40;
+  const cv=document.createElement('canvas');
+  cv.width=W;cv.height=H;
+  const ctx=cv.getContext('2d');
+  const font='"PingFang SC","Hiragino Sans GB","Microsoft Yahei",sans-serif';
+  ctx.textBaseline='alphabetic';
+  /* 背景 */
+  ctx.fillStyle='#f4f7f6';ctx.fillRect(0,0,W,H);
+  /* 头部 */
+  const gh=170;
+  const grd=ctx.createLinearGradient(0,0,W,gh);
+  grd.addColorStop(0,'#11483f');grd.addColorStop(1,'#0b382f');
+  ctx.fillStyle=grd;ctx.fillRect(0,0,W,gh);
+  ctx.fillStyle='#fff';ctx.font='bold 38px '+font;
+  ctx.fillText('展会报价统计',pad,78);
+  const d=new Date();
+  ctx.fillStyle='#9fc3ba';ctx.font='22px '+font;
+  ctx.fillText(d.getFullYear()+'年'+(d.getMonth()+1)+'月'+d.getDate()+'日 · 累计 '+st.count+' 组报价',pad,124);
+  if(rules.companyName){
+    ctx.textAlign='right';ctx.fillStyle='#9fc3ba';ctx.font='20px '+font;
+    ctx.fillText(rules.companyName,W-pad,78);
+    ctx.textAlign='left';
+  }
+  /* 四个指标格 */
+  const cells=[
+    ['今日报价',st.todayN+' 组'],['今日意向金额',fmtTotal(st.todayAmt)],
+    ['近 7 天',st.weekN+' 组 · '+fmtTotal(st.weekAmt)],['累计总金额',fmtTotal(st.totalAmt)]
+  ];
+  const bw=(W-pad*2-20)/2,bh=120;
+  cells.forEach((c,i)=>{
+    const x=pad+(i%2)*(bw+20),y=gh+34+Math.floor(i/2)*(bh+20);
+    ctx.fillStyle='#fff';rrPath(ctx,x,y,bw,bh,16);ctx.fill();
+    ctx.strokeStyle='#e3e8e6';ctx.lineWidth=1;ctx.stroke();
+    ctx.fillStyle='#6b7a77';ctx.font='20px '+font;
+    ctx.fillText(c[0],x+22,y+38);
+    ctx.fillStyle='#0e4f45';ctx.font='bold 32px '+font;
+    ctx.fillText(c[1],x+22,y+86);
+  });
+  /* 热门产品 */
+  let y=gh+34+bh*2+20+56;
+  ctx.fillStyle='#17211f';ctx.font='bold 24px '+font;
+  ctx.fillText('热门产品',pad,y);
+  ctx.font='22px '+font;
+  prods.forEach((p,i)=>{
+    ctx.fillStyle='#3f4c49';
+    ctx.fillText(p.cn,pad+6,y+44+i*40);
+    ctx.textAlign='right';ctx.fillStyle='#0e4f45';ctx.font='bold 22px '+font;
+    ctx.fillText('×'+p.n+' · '+fmtTotal(p.amt),W-pad,y+44+i*40);
+    ctx.textAlign='left';ctx.font='22px '+font;
+  });
+  /* 术语分布 */
+  let ty=y+44+prods.length*40+26;
+  const terms=[...st.termMap.entries()].sort((a,b)=>b[1]-a[1]);
+  if(terms.length){
+    ctx.fillStyle='#17211f';ctx.font='bold 24px '+font;
+    ctx.fillText('术语分布',pad,ty);
+    ctx.fillStyle='#3f4c49';ctx.font='22px '+font;
+    ctx.fillText(terms.map(([k,n])=>(k||'—')+' '+n+' 组').join('　'),pad,ty+40);
+    ty+=80;
+  }
+  /* 页脚 */
+  ctx.textAlign='center';ctx.fillStyle='#93a19d';ctx.font='20px '+font;
+  ctx.fillText('—— 展会口袋报价器 v'+APP_VER+' ——',W/2,H-40);
+  ctx.textAlign='left';
+  return cv;
+}
+async function shareStatsImage(){
+  if(!history.length){toast('暂无数据');return;}
+  const st=buildStats();
+  const cv=makeStatsImage(st);
+  const blob=await new Promise(r=>cv.toBlob(r,'image/png'));
+  if(!blob){toast('图片生成失败');return;}
+  const file=new File([blob],'quote-stats.png',{type:'image/png'});
+  if(navigator.canShare&&navigator.canShare({files:[file]})){
+    try{await navigator.share({files:[file],title:'展会报价统计'});return;}
+    catch(e){if(e&&e.name==='AbortError')return;}
+  }
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='quote-stats-'+new Date().toISOString().slice(0,10).replace(/-/g,'')+'.png';
+  document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href),3000);
+  toast('统计图片已生成，可在微信 / 飞书中发送');
+}
+/* 统计卡片图片：调起系统分享面板（面板内可选微信/飞书等应用），不支持时下载图片 */
 function syncSeg(seg){
   $$('#'+seg.id+' button').forEach(x=>x.classList.toggle('active',x.dataset.v===state[seg.dataset.key]));
 }
@@ -1096,16 +1350,7 @@ function bind(){
   $('#seg-view').addEventListener('click',e=>{
     const b=e.target.closest('button');if(b)switchView(b.dataset.v);
   });
-  $('#sh-copy').addEventListener('click',()=>{
-    const ok=()=>toast('报价摘要已复制');
-    const fallback=()=>{
-      const ta=document.createElement('textarea');ta.value=lastShare;document.body.appendChild(ta);ta.select();
-      try{document.execCommand('copy');ok();}catch(e){toast('复制失败，请手动选择');}
-      ta.remove();
-    };
-    if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(lastShare).then(ok).catch(fallback);
-    else fallback();
-  });
+  $('#sh-copy').addEventListener('click',()=>copyText(lastShare,'报价摘要已复制'));
   $('#sh-more').addEventListener('click',()=>{
     if(navigator.share)navigator.share({text:lastShare}).catch(()=>{});
     else $('#sh-copy').click();
@@ -1147,6 +1392,17 @@ function bind(){
     e.target.value='';
   });
   $('#btn-reset').addEventListener('click',e=>armOnce(e.currentTarget,'再点一次确认',resetDefaults));
+  /* 统计页 */
+  $('#btn-stats').addEventListener('click',()=>{renderStats();showScreen('screen-stats');});
+  $('#btn-stats-back').addEventListener('click',()=>showScreen('screen-home'));
+  $('#st-copy').addEventListener('click',()=>{statsShare?copyText(statsShare,'统计摘要已复制'):toast('暂无数据');});
+  $('#st-more').addEventListener('click',()=>{
+    if(!statsShare){toast('暂无数据');return;}
+    if(navigator.share)navigator.share({text:statsShare}).catch(()=>{});
+    else copyText(statsShare,'统计摘要已复制');
+  });
+  $('#st-csv').addEventListener('click',exportCsv);
+  $('#st-img').addEventListener('click',shareStatsImage);
   bindHold();
 }
 /* ---------- 扫样品码 ---------- */
