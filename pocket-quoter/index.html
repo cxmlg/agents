@@ -219,6 +219,9 @@ select,.in-input{border:1px solid #e3e8e6;background:#f4f6f5;border-radius:10px;
 .mchip{background:#f0f7f4;border-radius:10px;padding:10px 12px;font-size:13px;color:#0e4f45;font-weight:700;margin-top:8px}
 .mchip small{display:block;font-weight:400;color:#5b6a67;font-size:11px;margin-top:2px}
 .cv-co{text-align:center;font-size:13px;font-weight:800;color:#0e4f45;letter-spacing:2px;margin-bottom:8px;text-transform:uppercase}
+.cv-code{display:inline-block;font-size:11px;color:#5b6a67;background:#f4f6f5;border-radius:6px;padding:2px 8px;margin-top:7px;letter-spacing:.5px}
+.cv-issued{text-align:center;font-size:11px;color:#93a19d;margin-bottom:10px}
+.cv-contact{text-align:center;font-size:12.5px;color:#0e4f45;font-weight:700;margin-bottom:10px}
 .print-head{display:none}
 
 /* ---------- 报价统计 ---------- */
@@ -239,20 +242,38 @@ select,.in-input{border:1px solid #e3e8e6;background:#f4f6f5;border-radius:10px;
 .rank .rbar i{display:block;height:8px;background:#12655a;border-radius:99px}
 .rank .rnum{flex:none;width:92px;text-align:right;font-size:11.5px;color:#6b7a77}
 
-/* ---------- 打印：只输出客户报价 ---------- */
+.sd-cny{margin-top:6px;font-size:13px;color:#c2622a;font-weight:700}
+
+/* ---------- 正式报价单（仅打印输出） ---------- */
+#quote-doc{display:none}
+.qd{color:#111;font-size:12px;line-height:1.55}
+.qd-head{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #0e4f45;padding-bottom:10px;margin-bottom:14px}
+.qd-co b{font-size:20px;color:#0e4f45;letter-spacing:1px}
+.qd-co span{display:block;font-size:11px;color:#555;margin-top:3px}
+.qd-title{text-align:right}
+.qd-title h1{font-size:26px;letter-spacing:3px;color:#0e4f45;margin:0}
+.qd-title .zh{display:block;font-size:13px;color:#333;margin-top:2px;letter-spacing:6px}
+.qd-meta{margin-top:8px;font-size:11px;color:#333;line-height:1.7}
+.qd-to{margin:10px 0 12px;font-size:12px}
+.qd-table{width:100%;border-collapse:collapse;margin-bottom:14px}
+.qd-table th,.qd-table td{border:1px solid #b9c4c1;padding:7px 8px;font-size:11.5px;text-align:left;vertical-align:top}
+.qd-table th{background:#eef4f2;color:#0e4f45;font-size:11px}
+.qd-table .num{text-align:right;white-space:nowrap}
+.qd-table tfoot td{background:#f2f7f5;font-weight:700;font-size:12.5px}
+.qd-terms{margin-bottom:14px}
+.qd-terms h4{font-size:12px;letter-spacing:1px;color:#0e4f45;margin:0 0 6px;text-transform:uppercase}
+.qd-terms .t{display:flex;gap:8px;padding:4px 0;border-bottom:1px dashed #ddd;font-size:11.5px}
+.qd-terms .t span{flex:none;width:170px;color:#555}
+.qd-note{font-size:10.5px;color:#666;margin:8px 0 26px;line-height:1.6}
+.qd-sign{display:flex;justify-content:space-between;gap:40px;margin-top:28px}
+.qd-sign>div{flex:1;text-align:center;font-size:11.5px}
+.qd-sign span{display:block;font-size:11px;color:#555;margin-bottom:48px}
+
+/* ---------- 打印：仅输出正式报价单 ---------- */
 @media print{
- body{background:#fff}
- #app{box-shadow:none;max-width:none;background:#fff}
- .topbar,.rbar,.hold,.cta,.actions,.mini-links,#toast{display:none!important}
- #screen-home,#screen-settings{display:none!important}
- #screen-result{display:block!important}
- #pane-sales{display:none!important}
- #pane-cust{display:block!important;padding:0}
- .price-panel,.cert,.moq{-webkit-print-color-adjust:exact;print-color-adjust:exact}
- .print-head{display:block;text-align:center;margin-bottom:14px}
- .print-head b{font-size:18px;letter-spacing:2px;color:#0e4f45}
- .print-head span{display:block;font-size:11px;color:#666;margin-top:3px}
- .cv-co{display:none}
+  body{background:#fff}
+  #app,#toast,#scan-overlay{display:none!important}
+  #quote-doc{display:block!important}
 }
 </style>
 </head>
@@ -333,7 +354,7 @@ select,.in-input{border:1px solid #e3e8e6;background:#f4f6f5;border-radius:10px;
           </div>
           <div class="row" id="port-row" style="margin-top:8px">
             <label class="in-label" for="port">目的港</label>
-            <input id="port" class="in-input" style="flex:1;min-width:0" autocapitalize="characters">
+            <select id="port" style="flex:1;min-width:0"></select>
           </div>
         </div>
 
@@ -419,6 +440,7 @@ select,.in-input{border:1px solid #e3e8e6;background:#f4f6f5;border-radius:10px;
         <div id="sd-lines"></div>
         <div class="sd-total" id="sd-total"></div>
         <div class="mchip" id="sd-margin" hidden></div>
+        <div class="sd-cny" id="sd-cny"></div>
         <div class="sd-note" id="sd-moq"></div>
         <div class="sd-note">* 明细仅供谈价参考，未含佣金与汇率波动；返回调整条件可实时重算。</div>
       </div>
@@ -430,9 +452,11 @@ select,.in-input{border:1px solid #e3e8e6;background:#f4f6f5;border-radius:10px;
     <div id="pane-cust" class="pane">
       <div class="print-head" id="print-head"></div>
       <div class="cv-top">Customer view · Reference quote</div>
+      <div class="cv-issued" id="cv-issued"></div>
       <div class="cv-co" id="cv-co" hidden></div>
       <div class="cv-card">
         <div class="cv-name" id="cv-name"></div>
+        <span class="cv-code" id="cv-code"></span>
         <span class="cv-spec" id="cv-spec"></span>
         <span class="cv-dims" id="cv-dims"></span>
       </div>
@@ -463,6 +487,7 @@ select,.in-input{border:1px solid #e3e8e6;background:#f4f6f5;border-radius:10px;
         <button id="sh-more" type="button">更多分享</button>
         <button id="sh-print" type="button">打印 / PDF</button>
       </div>
+      <div class="cv-contact" id="cv-contact"></div>
       <div class="fine" id="cv-fine">* Reference quote for on-site negotiation only. Final price &amp; terms subject to PI confirmation.</div>
     </div>
 
@@ -522,6 +547,13 @@ select,.in-input{border:1px solid #e3e8e6;background:#f4f6f5;border-radius:10px;
       </div>
 
       <div class="card">
+        <div class="sec-title">▍目的港运费表</div>
+        <div class="sd-note" style="margin:0 0 10px">CIF/DDP 按所选目的港的运费、关税、派送费实算，航程天数会显示在客户页交期里；首页「目的港」下拉即来自此表。未匹配到港口时使用上方默认值。</div>
+        <div id="port-list"></div>
+        <button class="addp" id="btn-add-port" type="button">＋ 新增目的港</button>
+      </div>
+
+      <div class="card">
         <div class="sec-title">▍配置备份</div>
         <div class="set-actions">
           <button class="sbtn" id="btn-export" type="button">导出配置 JSON</button>
@@ -578,6 +610,7 @@ select,.in-input{border:1px solid #e3e8e6;background:#f4f6f5;border-radius:10px;
   </section>
 
 </div>
+<div id="quote-doc"></div>
 <div id="toast"></div>
 <div id="scan-overlay" hidden>
   <div class="scan-frame"><video id="scan-video" autoplay playsinline muted></video></div>
@@ -588,7 +621,7 @@ select,.in-input{border:1px solid #e3e8e6;background:#f4f6f5;border-radius:10px;
 
 <script>
 'use strict';
-const APP_VER='2.0.2';
+const APP_VER='2.1.1';
 const $=s=>document.querySelector(s);
 const $$=s=>Array.from(document.querySelectorAll(s));
 
@@ -611,6 +644,34 @@ const DEF_PRODUCTS=[
   base:12.90,cost:9.40,moqPerColor:500,cartonSets:20,cartonCbm:.24,sample:'有现成打样',tint:'#dce7de'}
 ];
 const TINTS=['#dfe9e6','#e9e2d6','#e3e6ee','#e6e0ec','#dce7de','#eadfe0','#e0e6da','#e8e3d0'];
+/* 目的港运费表：每个港口独立运费/关税/航程 */
+const DEF_PORTS=[
+ {name:'HAMBURG',ocean40:2600,lclRate:70,ddpTruck:1100,ddpLclClear:280,dutyRate:.064,transit:32},
+ {name:'ROTTERDAM',ocean40:2600,lclRate:70,ddpTruck:1050,ddpLclClear:280,dutyRate:.064,transit:30},
+ {name:'NEW YORK',ocean40:4200,lclRate:95,ddpTruck:1500,ddpLclClear:380,dutyRate:.075,transit:28},
+ {name:'LOS ANGELES',ocean40:3200,lclRate:85,ddpTruck:1350,ddpLclClear:350,dutyRate:.07,transit:15},
+ {name:'DUBAI',ocean40:2100,lclRate:60,ddpTruck:900,ddpLclClear:250,dutyRate:.05,transit:20}
+];
+function sanitizePort(p){
+  if(!p||typeof p!=='object')return null;
+  const name=String(p.name||'').trim().toUpperCase().slice(0,30);
+  if(!name)return null;
+  const num=(v,d)=>{const n=parseFloat(v);return isFinite(n)?n:d;};
+  return {name,
+    ocean40:Math.max(0,num(p.ocean40,2600)),
+    lclRate:Math.max(0,num(p.lclRate,70)),
+    ddpTruck:Math.max(0,num(p.ddpTruck,1100)),
+    ddpLclClear:Math.max(0,num(p.ddpLclClear,280)),
+    dutyRate:Math.max(0,Math.min(.5,num(p.dutyRate,.064))),
+    transit:Math.max(1,Math.min(120,Math.round(num(p.transit,30))))};
+}
+function loadPorts(){
+  let a=null;try{a=JSON.parse(localStorage.getItem('pqs-ports')||'null');}catch(e){a=null;}
+  const list=(Array.isArray(a)?a:[]).map(sanitizePort).filter(Boolean);
+  return list.length?list:DEF_PORTS.map(p=>Object.assign({},p));
+}
+function savePorts(){try{localStorage.setItem('pqs-ports',JSON.stringify(ports));}catch(e){}}
+
 const COLORS=[
  {n:'米白',c:'#f2ede3'},{n:'浅灰',c:'#cdd3d5'},{n:'深蓝',c:'#33455f'},{n:'藏青',c:'#202f4a'},
  {n:'雾粉',c:'#e6cdc7'},{n:'墨绿',c:'#34523f'},{n:'驼色',c:'#c7a377'},{n:'条纹',stripe:true}
@@ -635,27 +696,29 @@ const DEF_RULES={
  colorExtra:.008,colorCap:.04,
  packCarton:0,packBrand:.25,packWindow:.40,packVacuum:.15,
  cbm40:68,ocean40:2600,lclRate:70,lclMin:2,insRate:.001,dutyRate:.064,ddpTruck:1100,ddpLclClear:280,
+ fxRate:7.2,loadPort:'QINGDAO',
  payTT:0,payPre:-.015,payLC:.01,payDP:.02,
  custNew:0,custRet:-.02,custChain:-.035,
  rushAdd:.04,oekoAdd:.01,
  sNormal:7,pNormal:45,sRush:5,pRush:30,
- validDays:7,companyName:''
+ validDays:7,companyName:'',companyContact:''
 };
 const RULE_SCHEMA=[
  {sec:'数量档调价（%）',items:[['qty1','< 1,000 套'],['qty2','1,000–2,999'],['qty3','3,000–4,999'],['qty4','5,000–9,999'],['qty5','≥ 10,000']]},
  {sec:'颜色',items:[['colorExtra','超过 3 色 · 每色加 %'],['colorCap','多色加价上限 %']]},
  {sec:'包装加价（USD/套）',type:'usd',items:[['packCarton','出口纸箱'],['packBrand','品牌彩盒'],['packWindow','彩盒+开窗'],['packVacuum','真空压缩袋']]},
  {sec:'海运费（CIF/DDP 成本构成）',type:'num',items:[['cbm40','40HQ 可用体积 CBM'],['ocean40','海运费 USD/40HQ'],['lclRate','LCL 海运 USD/CBM'],['lclMin','LCL 最低计费 CBM'],['ddpTruck','清关派送 USD/柜'],['ddpLclClear','LCL 清关派送 USD/票']]},
- {sec:'保险与关税（%）',items:[['insRate','保险费率 %（110%投保）'],['dutyRate','关税率 %']]},
+ {sec:'保险与关税（%）',items:[['insRate','保险费率 %（110%投保）'],['dutyRate','默认关税率 %（未匹配目的港时）']]},
  {sec:'付款方式调价（%）',items:[['payTT','T/T 30/70'],['payPre','T/T 100% 预付'],['payLC','L/C 即期'],['payDP','D/P 即期']]},
  {sec:'客户与认证（%）',items:[['custNew','新客'],['custRet','老客返单'],['custChain','连锁大客户'],['rushAdd','加急交期加价'],['oekoAdd','OEKO-TEX 加收']]},
  {sec:'交期（天）',type:'day',items:[['sNormal','打样 · 正常'],['pNormal','量产 · 正常'],['sRush','打样 · 加急'],['pRush','量产 · 加急'],['validDays','报价有效期']]},
- {sec:'其他',type:'txt',items:[['companyName','公司抬头（客户页/打印/分享）']]}
+ {sec:'汇率换算',type:'num',items:[['fxRate','美元→人民币参考汇率']]},
+ {sec:'文本',type:'txt',items:[['companyName','公司抬头（客户页/打印/分享）'],['companyContact','联系方式（电话/邮箱，显示在客户页）'],['loadPort','装运港（FOB报价/报价单抬头）']]}
 ];
 
 /* ================= 状态 ================= */
 const DEF={productCode:'NT-60-0713',tab:'lib',qty:3000,tol:5,colors:[0,1,2,3,4],term:'DDP',port:'HAMBURG',pack:'brand',pay:'tt3070',deliv:'normal',cust:'new',custName:'',target:15,oeko:true,bsci:true};
-let state=loadState(),rules=loadRules(),products=loadProducts(),history=loadHistory();
+let state=loadState(),rules=loadRules(),products=loadProducts(),history=loadHistory(),ports=loadPorts();
 /* 产品库可能在设置里被改过，校验当前选中产品仍然存在 */
 if(!products.some(p=>p.code===state.productCode)){state.productCode=products[0].code;save();}
 let view='cust',lastShare='',curSnap=null;
@@ -684,7 +747,7 @@ function loadRules(){
   let r={};try{r=JSON.parse(localStorage.getItem('pqs-rules')||'{}')||{};}catch(e){r={};}
   const out=Object.assign({},DEF_RULES);
   for(const k in DEF_RULES){
-    if(k==='companyName'){if(typeof r[k]==='string')out[k]=r[k].slice(0,60);}
+    if(k==='companyName'||k==='companyContact'||k==='loadPort'){if(typeof r[k]==='string')out[k]=r[k].slice(0,80);}
     else if(typeof r[k]==='number'&&isFinite(r[k]))out[k]=r[k];
   }
   return out;
@@ -777,23 +840,27 @@ function calcOf(s){
    lines.push({t:'颜色',d:`${nC} 色${ca?'（多色染色分摊）':''}`,delta:nv-v});v=nv;}
   const pa=R[PACKS[s.pack].rk]||0;
   lines.push({t:'包装',d:PACKS[s.pack].cn,delta:pa});v+=pa;
-  /* 海运/保险/关税/派送按成本项实算：整柜按柜摊销，拼箱按 CBM 计费 */
+  /* 海运/保险/关税/派送按成本项实算：优先取目的港运费表，未匹配用默认值 */
+  const PF=ports.find(x=>x.name===String(s.port||'').trim().toUpperCase());
+  const ocean=PF?PF.ocean40:R.ocean40,lclR=PF?PF.lclRate:R.lclRate,
+        truck=PF?PF.ddpTruck:R.ddpTruck,lclClear=PF?PF.ddpLclClear:R.ddpLclClear,
+        dutyRate=PF?PF.dutyRate:R.dutyRate,transit=PF?PF.transit:R.pNormal;
   const cs=p.cartonSets||20,cc=p.cartonCbm||.24,qq=Math.max(1,q);
   const totalCbm=q/cs*cc;
   let containers=0,mode='LCL',seaPerSet=0;
-  if(totalCbm>=R.cbm40*.7){containers=Math.ceil(totalCbm/R.cbm40);seaPerSet=containers*R.ocean40/qq;mode='FCL';}
-  else if(totalCbm>0){seaPerSet=Math.max(totalCbm,R.lclMin)*R.lclRate/qq;}
+  if(totalCbm>=R.cbm40*.7){containers=Math.ceil(totalCbm/R.cbm40);seaPerSet=containers*ocean/qq;mode='FCL';}
+  else if(totalCbm>0){seaPerSet=Math.max(totalCbm,R.lclMin)*lclR/qq;}
   if(s.term==='CIF'||s.term==='DDP'){
     if(seaPerSet>.005){const nv=v+seaPerSet;
-      lines.push({t:'海运费',d:(mode==='FCL'?`${containers} × 40HQ（$${fmtInt(R.ocean40)}/柜）`:`LCL ${Math.round(totalCbm*10)/10} CBM × $${R.lclRate}/CBM`),delta:nv-v});v=nv;}
+      lines.push({t:'海运费',d:(mode==='FCL'?`${containers} × 40HQ（$${fmtInt(ocean)}/柜 · ${s.port.trim().toUpperCase()}）`:`LCL ${Math.round(totalCbm*10)/10} CBM × $${lclR}/CBM`),delta:nv-v});v=nv;}
     const ins=v*1.1*R.insRate;
     if(ins>.005){const nv=v+ins;lines.push({t:'保险费',d:'投保 110% × 费率 '+(Math.round(R.insRate*100000)/1000)+'%',delta:nv-v});v=nv;}
   }
   if(s.term==='DDP'){
-    const duty=v*R.dutyRate;
-    if(duty>.005){const nv=v+duty;lines.push({t:'关税',d:'税率 '+(Math.round(R.dutyRate*100000)/1000)+'% × CIF 值',delta:nv-v});v=nv;}
-    const end=mode==='FCL'?containers*R.ddpTruck/qq:R.ddpLclClear/qq;
-    if(end>.005){const nv=v+end;lines.push({t:'清关派送',d:(mode==='FCL'?`$${fmtInt(R.ddpTruck)}/柜 × ${containers}`:`$${R.ddpLclClear}/票`)+' ÷ '+fmtInt(q)+' 套',delta:nv-v});v=nv;}
+    const duty=v*dutyRate;
+    if(duty>.005){const nv=v+duty;lines.push({t:'关税',d:'税率 '+(Math.round(dutyRate*100000)/1000)+'% × CIF 值（'+(PF?PF.name:'默认')+'）',delta:nv-v});v=nv;}
+    const end=mode==='FCL'?containers*truck/qq:lclClear/qq;
+    if(end>.005){const nv=v+end;lines.push({t:'清关派送',d:(mode==='FCL'?`$${fmtInt(truck)}/柜 × ${containers}`:`$${lclClear}/票`)+' ÷ '+fmtInt(q)+' 套',delta:nv-v});v=nv;}
   }
   if(s.term==='FOB')lines.push({t:'贸易术语',d:'FOB（口岸船上交货，不含海运/保险/关税）',delta:0});
   const paj=R[PAYS[s.pay].rk]||0;
@@ -813,7 +880,8 @@ function calcOf(s){
   const perColor=Math.floor(q/nC);
   return {final,total:q*final,lines,perColor,
     moqOk:perColor>=p.moqPerColor,moq:p.moqPerColor,nC,
-    sampleDays:rush?R.sRush:R.sNormal,prodDays:rush?R.pRush:R.pNormal};
+    sampleDays:rush?R.sRush:R.sNormal,prodDays:rush?R.pRush:R.pNormal,
+    transit:(s.term!=='FOB')?transit:0};
 }
 function currentFormSnap(){
   return {product:P(),qty:state.qty,tol:state.tol,colors:state.colors.slice(),
@@ -937,10 +1005,10 @@ function statsShareText(st){
 }
 function exportCsv(){
   if(!history.length){toast('暂无报价记录');return;}
-  const rows=[['单号','时间','客户','产品编号','产品名称','数量(套)','颜色数','贸易术语','目的港','包装','付款方式','客户类型','单价USD','总金额USD','OEKO-TEX','BSCI','目标价USD']];
+  const rows=[['单号','时间','客户','产品编号','产品名称','数量(套)','颜色数','贸易术语','目的港','包装','付款方式','客户类型','单价USD','总金额USD','单价CNY','总金额CNY','OEKO-TEX','BSCI','目标价USD']];
   history.slice().sort((a,b)=>(a.ts||0)-(b.ts||0)).forEach(h=>{
     let c={final:0,total:0};try{c=calcOf(h);}catch(e){}
-    rows.push([h.ref||'',h.ts?new Date(h.ts).toLocaleString('zh-CN'):'',h.custName||'',h.product&&h.product.code||'',h.product&&h.product.cn||'',h.qty||0,(h.colors&&h.colors.length)||0,h.term||'',h.term!=='FOB'?(h.port||''):'',PACKS[h.pack]?PACKS[h.pack].cn:(h.pack||''),PAYS[h.pay]?PAYS[h.pay].cn:(h.pay||''),CUSTS[h.cust]?CUSTS[h.cust].cn:(h.cust||''),c.final.toFixed(2),c.total.toFixed(2),h.oeko?'是':'',h.bsci?'是':'',h.target||'']);
+    rows.push([h.ref||'',h.ts?new Date(h.ts).toLocaleString('zh-CN'):'',h.custName||'',h.product&&h.product.code||'',h.product&&h.product.cn||'',h.qty||0,(h.colors&&h.colors.length)||0,h.term||'',h.term!=='FOB'?(h.port||''):'',PACKS[h.pack]?PACKS[h.pack].cn:(h.pack||''),PAYS[h.pay]?PAYS[h.pay].cn:(h.pay||''),CUSTS[h.cust]?CUSTS[h.cust].cn:(h.cust||''),c.final.toFixed(2),c.total.toFixed(2),(c.final*rules.fxRate).toFixed(2),(c.total*rules.fxRate).toFixed(2),h.oeko?'是':'',h.bsci?'是':'',h.target||'']);
   });
   const csv='\uFEFF'+rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\r\n');
   const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
@@ -1049,10 +1117,35 @@ async function shareStatsImage(){
   toast('统计图片已生成，可在微信 / 飞书中发送');
 }
 /* 统计卡片图片：调起系统分享面板（面板内可选微信/飞书等应用），不支持时下载图片 */
+function renderPortSelect(){
+  const sel=$('#port'),cur=String(state.port||'').trim().toUpperCase();
+  const names=ports.map(p=>p.name);
+  if(cur&&!names.includes(cur))names.unshift(cur);
+  sel.innerHTML=names.map(n=>`<option value="${esc(n)}">${esc(n)}</option>`).join('');
+  sel.value=names.includes(cur)?cur:names[0];
+}
 function refreshCustList(){
   const seen=new Set(),opts=[];
   history.forEach(h=>{const n=(h.custName||'').trim();if(n&&!seen.has(n)){seen.add(n);opts.push(n);}});
   $('#cust-list').innerHTML=opts.slice(0,20).map(n=>`<option value="${esc(n)}"></option>`).join('');
+}
+function renderPortList(){
+  $('#port-list').innerHTML=ports.map((p,i)=>`
+    <div class="setp" style="display:block;padding:10px 0">
+      <div class="rgrid">
+        <div class="ritem" style="grid-column:1 / -1;display:flex;align-items:center;gap:8px">
+          <span class="mini-label" style="margin:0">港口</span>
+          <input data-pk="name" data-i="${i}" value="${esc(p.name)}" style="flex:1;border:0;background:transparent;font-size:14px;font-weight:700;outline:none;text-transform:uppercase" autocapitalize="characters">
+          <button class="sbtn danger" data-act="pdel" data-i="${i}" type="button">删除</button>
+        </div>
+        <div class="ritem"><label>海运 USD/40HQ</label><input type="number" data-pk="ocean40" data-i="${i}" value="${p.ocean40}"></div>
+        <div class="ritem"><label>LCL USD/CBM</label><input type="number" data-pk="lclRate" data-i="${i}" value="${p.lclRate}"></div>
+        <div class="ritem"><label>派送 USD/柜</label><input type="number" data-pk="ddpTruck" data-i="${i}" value="${p.ddpTruck}"></div>
+        <div class="ritem"><label>LCL清关 USD/票</label><input type="number" data-pk="ddpLclClear" data-i="${i}" value="${p.ddpLclClear}"></div>
+        <div class="ritem"><label>关税率 %</label><input type="number" step="0.1" data-pk="dutyRate" data-i="${i}" value="${Math.round(p.dutyRate*10000)/100}"></div>
+        <div class="ritem"><label>航程 天</label><input type="number" data-pk="transit" data-i="${i}" value="${p.transit}"></div>
+      </div>
+    </div>`).join('');
 }
 function syncSeg(seg){
   $$('#'+seg.id+' button').forEach(x=>x.classList.toggle('active',x.dataset.v===state[seg.dataset.key]));
@@ -1060,7 +1153,8 @@ function syncSeg(seg){
 function syncForm(){
   $('#qty').value=state.qty;$('#tol').value=String(state.tol);
   $('#cust').value=state.custName;refreshCustList();
-  $('#port').value=state.port;$('#target').value=state.target||'';
+  renderPortSelect();$('#port').value=state.port;
+  $('#target').value=state.target||'';
   $('#pack').value=state.pack;$('#pay').value=state.pay;
   $$('.seg').forEach(seg=>{if(seg.id!=='seg-view')syncSeg(seg);});
   $('#port-row').style.display=state.term==='FOB'?'none':'flex';
@@ -1073,7 +1167,8 @@ function syncForm(){
   updateLive();
 }
 function termText(s){
-  return s.term+(s.term!=='FOB'&&s.port&&s.port.trim()?' '+s.port.trim().toUpperCase():'');
+  if(s.term==='FOB')return 'FOB'+(rules.loadPort?' '+rules.loadPort.toUpperCase():'');
+  return s.term+(s.port&&s.port.trim()?' '+s.port.trim().toUpperCase():'');
 }
 function updateLive(){
   if(!products.length)return;
@@ -1113,9 +1208,14 @@ function renderResult(snap){
   }else{chip.className='tchip';chip.textContent='未填客户目标价（可选，填了可对比成交空间）';}
   /* 客户视角 */
   $('#cv-name').textContent=p.en;
+  $('#cv-code').textContent='Art. No. '+p.code;
   $('#cv-spec').textContent=p.spec;
   $('#cv-dims').textContent=p.dimsEn;
   $('#cv-term').textContent=termText(snap);
+  $('#cv-issued').textContent='Issued: '+(snap.ts?new Date(snap.ts).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}));
+  const ctEl=$('#cv-contact');
+  if(rules.companyContact){ctEl.textContent='Contact: '+rules.companyContact;ctEl.style.display='block';}
+  else ctEl.style.display='none';
   const co=rules.companyName||'';
   const coEl=$('#cv-co');
   coEl.hidden=!co;coEl.textContent=co;
@@ -1130,15 +1230,18 @@ function renderResult(snap){
     ['Packaging',PACKS[snap.pack].en],
     ['Payment',PAYS[snap.pay].en],
     ['Sample',`${c.sampleDays} days`],
-    ['Production',`${c.prodDays} days`],
-    ['Quote valid',`${vd} days · till ${valid}`]
+    ['Production',`${c.prodDays} days`]
   ];
+  if(c.transit)rows.push(['Sea transit',`~${c.transit} days to ${snap.port.trim().toUpperCase()}`]);
+  rows.push(['Quote valid',`${vd} days · till ${valid}`]);
   $('#cv-rows').innerHTML=rows.map(r=>`<div class="t-row"><span>${r[0]}</span><b>${esc(r[1])}</b></div>`).join('');
   const moq=$('#cv-moq');
   moq.className='moq'+(c.moqOk?'':' warn');
   moq.textContent=c.moqOk?`✓ MOQ met · ${fmtInt(c.perColor)} sets / color`:`△ Below MOQ · ${fmtInt(c.perColor)} sets/color, need ≥ ${fmtInt(c.moq)}`;
   $('#cv-certs').innerHTML=(snap.oeko?'<span class="cert">✓ OEKO-TEX STANDARD 100</span>':'')+(snap.bsci?'<span class="cert">✓ BSCI AUDITED</span>':'');
   $('#cv-fine').textContent=`* ${snap.ref} · Reference quote for on-site negotiation only. Final price & terms subject to PI confirmation.`;
+  /* 人民币参考 */
+  $('#sd-cny').textContent=`折合人民币约 ¥${Math.round(c.total*rules.fxRate).toLocaleString('zh-CN')}（汇率 ${rules.fxRate}，仅参考）`;
   lastShare=shareText(snap,c,valid);
   $('#sh-wa').href='https://wa.me/?text='+encodeURIComponent(lastShare);
   $('#sh-mail').href='mailto:?subject='+encodeURIComponent(`Quotation ${snap.ref} - ${p.en}`)+'&body='+encodeURIComponent(lastShare);
@@ -1150,6 +1253,7 @@ function shareText(snap,c,valid){
   return [
     rules.companyName?`*${rules.companyName}*`:'',
     `Quotation ${snap.ref} (reference)`,
+    `Art. No. ${p.code}`,
     `${p.en}${p.spec?' · '+p.spec:''}`,
     p.dimsEn,
     `${termText(snap)}: USD ${c.final.toFixed(2)} / set`,
@@ -1298,7 +1402,7 @@ function importConfig(file){
       products=list;
       if(typeof data.rules==='object'&&data.rules)
         for(const k in DEF_RULES){
-          if(k==='companyName'){if(typeof data.rules[k]==='string')rules[k]=data.rules[k].slice(0,60);}
+          if(k==='companyName'||k==='companyContact'||k==='loadPort'){if(typeof data.rules[k]==='string')rules[k]=data.rules[k].slice(0,80);}
           else if(typeof data.rules[k]==='number'&&isFinite(data.rules[k]))rules[k]=data.rules[k];
         }
       if(!products.some(p=>p.code===state.productCode))state.productCode=products[0].code;
@@ -1387,7 +1491,7 @@ function bind(){
       save();updateLive();
     });
   });
-  $('#port').addEventListener('input',e=>{state.port=e.target.value;save();updateLive();});
+  $('#port').addEventListener('change',e=>{state.port=e.target.value;save();updateLive();});
   $('#cust').addEventListener('input',e=>{state.custName=e.target.value;save();});
   $('#target').addEventListener('input',e=>{state.target=Math.max(0,parseFloat(e.target.value)||0);save();});
   $('#pack').addEventListener('change',e=>{state.pack=e.target.value;save();updateLive();});
@@ -1417,7 +1521,11 @@ function bind(){
     if(navigator.share)navigator.share({text:lastShare}).catch(()=>{});
     else $('#sh-copy').click();
   });
-  $('#sh-print').addEventListener('click',()=>window.print());
+  $('#sh-print').addEventListener('click',()=>{
+    if(!curSnap){toast('请先生成报价');return;}
+    renderQuoteDoc(curSnap);
+    window.print();
+  });
   /* 设置页 */
   $('#set-plist').addEventListener('click',e=>{
     const b=e.target.closest('button');if(!b)return;
@@ -1455,6 +1563,34 @@ function bind(){
     e.target.value='';
   });
   $('#btn-reset').addEventListener('click',e=>armOnce(e.currentTarget,'再点一次确认',resetDefaults));
+  /* 目的港运费表 */
+  $('#btn-add-port').addEventListener('click',()=>{
+    ports.push(sanitizePort({name:'NEW PORT '+(ports.length+1)}));
+    savePorts();renderPortList();renderPortSelect();updateLive();
+    toast('已新增目的港，请填写运费信息');
+  });
+  $('#port-list').addEventListener('input',e=>{
+    const inp=e.target.closest('input[data-pk]');if(!inp)return;
+    const i=parseInt(inp.dataset.i),k=inp.dataset.pk;
+    if(!ports[i])return;
+    if(k==='name'){ports[i].name=inp.value.toUpperCase().slice(0,30);savePorts();renderPortSelect();return;}
+    const num=parseFloat(inp.value);
+    if(k==='dutyRate')ports[i].dutyRate=Math.max(0,Math.min(.5,isFinite(num)?num/100:0));
+    else if(k==='transit')ports[i].transit=Math.max(1,Math.min(120,isFinite(num)?Math.round(num):30));
+    else ports[i][k]=Math.max(0,Math.min(100000,isFinite(num)?num:0));
+    savePorts();updateLive();
+  });
+  $('#port-list').addEventListener('click',e=>{
+    const b=e.target.closest('button[data-act=pdel]');if(!b)return;
+    armOnce(b,'确认',()=>{
+      if(ports.length<=1){toast('至少保留一个目的港');return;}
+      const i=parseInt(b.dataset.i),nm=ports[i].name;
+      ports.splice(i,1);savePorts();
+      if(state.port.toUpperCase()===nm){state.port=ports[0].name;save();}
+      renderPortList();renderPortSelect();updateLive();
+      toast('已删除 '+nm);
+    });
+  });
   /* 统计页 */
   $('#btn-stats').addEventListener('click',()=>{renderStats();showScreen('screen-stats');});
   $('#btn-stats-back').addEventListener('click',()=>showScreen('screen-home'));
@@ -1586,6 +1722,56 @@ function stopScan(){
   $('#scan-video').srcObject=null;
   $('#scan-overlay').hidden=true;
   $('#scan-err').hidden=true;
+}
+/* ================= 正式报价单（打印导出 PDF） ================= */
+function renderQuoteDoc(snap){
+  const p=snap.product,c=calcOf(snap);
+  const vd=Math.max(1,Math.round(rules.validDays)||7);
+  const today=new Date().toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric'});
+  const valid=new Date(Date.now()+vd*864e5).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+  const co=rules.companyName||'SELLER EXPORT CO., LTD',lp=rules.loadPort||'QINGDAO';
+  const amount=c.total.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  const termLine=termText(snap)+(snap.term!=='FOB'?' (Incoterms 2020)':' — FOB '+(lp||'China port'));
+  const comp=[snap.oeko?'OEKO-TEX':null,snap.bsci?'BSCI':null].filter(Boolean).join(' / ')||'—';
+  const terms=[
+    ['Price term 价格条款',termLine],
+    ['Payment 付款方式',PAYS[snap.pay].en],
+    ['Packaging 包装',PACKS[snap.pack].en+' · '+c.nC+' color'+(c.nC>1?'s':'')],
+    ['Sample / Production 打样与交期',`Sample ${c.sampleDays} days · Production ${c.prodDays} days after order & artwork confirmation`]
+  ];
+  if(c.transit)terms.push(['Sea transit 海运航程',`Approx. ${c.transit} days to ${snap.port.trim().toUpperCase()}`]);
+  terms.push(['MOQ 最小起订',fmtInt(c.moq)+' sets per color'],
+    ['Validity 报价有效期',`${vd} days, till ${valid}`],
+    ['Compliance 认证',comp]);
+  $('#quote-doc').innerHTML=`
+   <div class="qd">
+    <div class="qd-head">
+      <div class="qd-co"><b>${esc(co)}</b><span>Port of Loading: ${esc(lp)}, China${rules.companyContact?' · '+esc(rules.companyContact):''}</span></div>
+      <div class="qd-title"><h1>QUOTATION</h1><span class="zh">报 价 单</span>
+        <div class="qd-meta">No. ${esc(snap.ref)}<br>Date: ${today}<br>Valid till: ${valid}</div>
+      </div>
+    </div>
+    <div class="qd-to">To 致：<b>${esc(snap.custName||'Valued Customer')}</b></div>
+    <table class="qd-table">
+      <thead><tr><th style="width:32px">No.</th><th>Product / 产品描述</th><th class="num">Qty 数量</th><th class="num">Unit price (USD)</th><th class="num">Amount (USD)</th></tr></thead>
+      <tbody><tr>
+        <td>1</td>
+        <td><b>${esc(p.en)}</b>${p.spec?' · '+esc(p.spec):''}<br>${esc(p.dimsEn||'')}<br><span style="color:#777">${esc(p.cn)}${p.dimsCn?' · '+esc(p.dimsCn):''}</span></td>
+        <td class="num">${fmtInt(snap.qty)} sets</td>
+        <td class="num">${c.final.toFixed(2)}</td>
+        <td class="num">${amount}</td>
+      </tr></tbody>
+      <tfoot><tr><td colspan="3">TOTAL 合计（${fmtInt(snap.qty)} sets）</td><td class="num">USD</td><td class="num">${amount}</td></tr></tfoot>
+    </table>
+    <div class="qd-terms"><h4>Terms &amp; Conditions 条款</h4>
+      ${terms.map(t=>`<div class="t"><span>${esc(t[0])}</span><div>${esc(t[1])}</div></div>`).join('')}
+    </div>
+    <div class="qd-note">* This quotation is for reference only and subject to final Sales Confirmation (PI). 以上为参考报价，最终价格与条款以双方确认的形式发票（PI）为准。Sea freight is quoted per current market rate and subject to adjustment at booking time. RMB figures, if any, are converted at indicative rate ${rules.fxRate}.</div>
+    <div class="qd-sign">
+      <div><span>For the Seller 卖方（盖章）</span>${esc(co)}<br><br><i>Authorised signature / date</i></div>
+      <div><span>Customer confirmation 客户确认</span>${esc(snap.custName||'')}<br><br><i>Signature / date</i></div>
+    </div>
+   </div>`;
 }
 function bindHold(){
   const hold=$('#hold'),fill=hold.querySelector('.fill');
