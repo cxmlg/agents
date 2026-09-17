@@ -97,6 +97,18 @@ select,.in-input{border:1px solid #e3e8e6;background:#f4f6f5;border-radius:10px;
 .live{display:block;width:max-content;max-width:100%;margin:0 auto 8px;font-size:12px;color:#0e4f45;text-align:center;background:#fff;border-radius:99px;padding:6px 14px;box-shadow:0 1px 6px rgba(14,79,69,.14);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #btn-gen{width:100%;border:0;background:#12655a;color:#fff;font-size:16px;font-weight:800;padding:15px;border-radius:14px;box-shadow:0 6px 18px rgba(18,101,90,.35);letter-spacing:1px}
 #btn-gen:active{transform:scale(.98)}
+.cta-btns{display:flex;gap:8px}
+#btn-addcart{flex:none;width:104px;border:1.5px solid #12655a;background:#fff;color:#0e4f45;border-radius:14px;font-size:13.5px;font-weight:800}
+#btn-gen{flex:1}
+#cart-strip{display:flex;align-items:center;gap:8px;background:#fff;border-radius:12px;padding:6px 10px;margin-bottom:8px;box-shadow:0 1px 6px rgba(14,79,69,.12)}
+#cart-strip[hidden]{display:none}
+.cs-label{flex:none;font-size:11.5px;color:#6b7a77;font-weight:700}
+.cs-label b{color:#0e4f45}
+.cs-chips{flex:1;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+.cs-chips::-webkit-scrollbar{display:none}
+.cchip{flex:none;display:flex;align-items:center;gap:4px;background:#e9f4f0;color:#0e4f45;border-radius:99px;padding:4px 6px 4px 10px;font-size:11.5px;font-weight:600;white-space:nowrap}
+.cchip button{border:0;background:#12655a;color:#fff;width:16px;height:16px;border-radius:50%;font-size:10px;line-height:1;display:grid;place-items:center;padding:0}
+#cart-clear{flex:none;border:0;background:none;color:#b3472b;font-size:11.5px;font-weight:700;padding:4px}
 
 /* ---------- 结果页头部 ---------- */
 .rbar{position:sticky;top:0;z-index:6;display:flex;align-items:center;gap:10px;padding:10px 12px;background:#0e4f45;color:#fff}
@@ -223,6 +235,16 @@ select,.in-input{border:1px solid #e3e8e6;background:#f4f6f5;border-radius:10px;
 .cv-issued{text-align:center;font-size:11px;color:#93a19d;margin-bottom:10px}
 .cv-contact{text-align:center;font-size:12.5px;color:#0e4f45;font-weight:700;margin-bottom:10px}
 .print-head{display:none}
+#cv-img{width:100%;height:150px;object-fit:cover;border-radius:10px;margin-bottom:10px}
+.cvi{display:flex;gap:10px;align-items:center;padding:9px 0;border-top:1px solid #e6ebe9}
+.cvi:first-child{border-top:0;padding-top:0}
+.cvi img{width:52px;height:40px;object-fit:cover;border-radius:8px;flex:none}
+.cvi-t{flex:1;min-width:0}
+.cvi-t b{font-size:13.5px;display:block;line-height:1.3}
+.cvi-t span{font-size:11px;color:#6b7a77}
+.cvi-p{text-align:right;flex:none}
+.cvi-p b{display:block;font-size:13.5px;color:#0e4f45}
+.cvi-p span{font-size:11px;color:#6b7a77}
 
 /* ---------- 报价统计 ---------- */
 .bigbtn{width:100%;border:0;background:#fff;color:#0e4f45;border-radius:12px;padding:12px 0;font-size:14px;font-weight:800;box-shadow:0 1px 6px rgba(14,79,69,.12);margin-bottom:12px;letter-spacing:.5px}
@@ -429,8 +451,16 @@ select,.in-input{border:1px solid #e3e8e6;background:#f4f6f5;border-radius:10px;
     </div>
 
     <div class="cta">
+      <div id="cart-strip" hidden>
+        <span class="cs-label">报价单 <b id="cart-n"></b></span>
+        <div class="cs-chips" id="cart-chips"></div>
+        <button id="cart-clear" type="button">清空</button>
+      </div>
       <div class="live" id="live"></div>
-      <button id="btn-gen" class="ibtn" type="button">生成参考报价<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg></button>
+      <div class="cta-btns">
+        <button id="btn-addcart" type="button">＋ 加入</button>
+        <button id="btn-gen" class="ibtn" type="button">生成参考报价<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg></button>
+      </div>
     </div>
   </section>
 
@@ -468,11 +498,13 @@ select,.in-input{border:1px solid #e3e8e6;background:#f4f6f5;border-radius:10px;
       <div class="cv-issued" id="cv-issued"></div>
       <div class="cv-co" id="cv-co" hidden></div>
       <div class="cv-card">
+        <img id="cv-img" alt="" style="display:none">
         <div class="cv-name" id="cv-name"></div>
         <span class="cv-code" id="cv-code"></span>
         <span class="cv-spec" id="cv-spec"></span>
         <span class="cv-dims" id="cv-dims"></span>
       </div>
+      <div class="cv-card" id="cv-items" hidden></div>
       <div class="price-panel">
         <div class="pp-term" id="cv-term"></div>
         <div class="pp-price"><span class="big" id="cv-price"></span><span class="per">USD / set</span></div>
@@ -568,6 +600,7 @@ select,.in-input{border:1px solid #e3e8e6;background:#f4f6f5;border-radius:10px;
 
       <div class="card">
         <div class="sec-title">▍配置备份</div>
+        <div class="tchip" id="bk-hint" hidden></div>
         <div class="set-actions">
           <button class="sbtn" id="btn-export" type="button">导出配置 JSON</button>
           <button class="sbtn" id="btn-backup" type="button">备份全部数据</button>
@@ -636,7 +669,7 @@ select,.in-input{border:1px solid #e3e8e6;background:#f4f6f5;border-radius:10px;
 
 <script>
 'use strict';
-const APP_VER='2.2.1';
+const APP_VER='2.3';
 const $=s=>document.querySelector(s);
 const $$=s=>Array.from(document.querySelectorAll(s));
 
@@ -732,7 +765,7 @@ const RULE_SCHEMA=[
 ];
 
 /* ================= 状态 ================= */
-const DEF={productCode:'NT-60-0713',tab:'lib',qty:3000,tol:5,colors:[0,1,2,3,4],term:'DDP',port:'HAMBURG',pack:'brand',pay:'tt3070',deliv:'normal',cust:'new',custName:'',target:15,oeko:true,bsci:true};
+const DEF={productCode:'NT-60-0713',tab:'lib',qty:3000,tol:5,colors:[0,1,2,3,4],term:'DDP',port:'HAMBURG',pack:'brand',pay:'tt3070',deliv:'normal',cust:'new',custName:'',target:15,oeko:true,bsci:true,cart:[]};
 let state=loadState(),rules=loadRules(),products=loadProducts(),history=loadHistory(),ports=loadPorts();
 /* 产品库可能在设置里被改过，校验当前选中产品仍然存在 */
 if(!products.some(p=>p.code===state.productCode)){state.productCode=products[0].code;save();}
@@ -751,6 +784,8 @@ function loadState(){
   if(!PAYS[st.pay])st.pay=DEF.pay;
   if(!CUSTS[st.cust])st.cust=DEF.cust;
   st.custName=String(st.custName==null?'':st.custName).trim().slice(0,60);
+  if(!Array.isArray(st.cart))st.cart=[];
+  st.cart=st.cart.filter(c=>c&&c.product&&c.product.code&&c.qty>0).slice(0,20);
   if(st.term!=='FOB'&&st.term!=='CIF'&&st.term!=='DDP')st.term='DDP';
   if(st.deliv!=='normal'&&st.deliv!=='rush')st.deliv='normal';
   st.target=Math.max(0,parseFloat(st.target)||0);
@@ -797,9 +832,10 @@ function loadHistory(){
   try{const h=JSON.parse(localStorage.getItem('pqs-history')||'[]');return Array.isArray(h)?h.slice(0,30):[];}catch(e){return[];}
 }
 function save(){try{localStorage.setItem('pqs-state',JSON.stringify(state));}catch(e){}}
-function saveRules(){try{localStorage.setItem('pqs-rules',JSON.stringify(rules));}catch(e){}}
-function saveProducts(){try{localStorage.setItem('pqs-products',JSON.stringify(products));}catch(e){}}
-function saveHistory(){try{localStorage.setItem('pqs-history',JSON.stringify(history));}catch(e){}}
+function saveRules(){bumpChange();try{localStorage.setItem('pqs-rules',JSON.stringify(rules));}catch(e){}}
+function saveProducts(){bumpChange();try{localStorage.setItem('pqs-products',JSON.stringify(products));}catch(e){}}
+function saveHistory(){bumpChange();try{localStorage.setItem('pqs-history',JSON.stringify(history));}catch(e){}}
+function savePorts(){bumpChange();try{localStorage.setItem('pqs-ports',JSON.stringify(ports));}catch(e){}}
 
 function P(){return products.find(p=>p.code===state.productCode)||products[0];}
 
@@ -816,6 +852,16 @@ function thumb(tint){
 }
 let toastTimer=null;
 function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),1800);}
+/* 备份提醒：数据变更时间 vs 上次备份时间 */
+function loadBk(){try{return JSON.parse(localStorage.getItem('pqs-bk')||'{"change":0,"backup":0}')||{change:0,backup:0};}catch(e){return{change:0,backup:0};}}
+function bumpChange(){try{const b=loadBk();b.change=Date.now();localStorage.setItem('pqs-bk',JSON.stringify(b));}catch(e){}}
+function markBackup(){try{const b=loadBk();b.backup=Date.now();b.change=Date.now();localStorage.setItem('pqs-bk',JSON.stringify(b));}catch(e){}}
+function updateBkHint(){
+  const b=loadBk(),el=$('#bk-hint');if(!el)return;
+  const days=b.change?Math.floor(((b.change)-(b.backup||0))/864e5):0;
+  if(b.change&&days>=3){el.hidden=false;el.className='tchip no';el.textContent='距上次备份已 '+days+' 天且数据有变更，建议点「备份全部数据」导出一次';}
+  else el.hidden=true;
+}
 function copyText(txt,okMsg){
   const ok=()=>toast(okMsg);
   const fallback=()=>{
@@ -904,6 +950,20 @@ function currentFormSnap(){
     cust:state.cust,custName:(state.custName||'').trim().slice(0,60),
     target:state.target,oeko:state.oeko,bsci:state.bsci};
 }
+/* 多产品报价：逐项实算（运费/关税按各项目体积与数量独立计算）后汇总 */
+function quoteItemsOf(s){
+  return (s.items&&s.items.length)?s.items:[{product:s.product,qty:s.qty||0,colors:s.colors||[]}];
+}
+function quoteTotals(s){
+  const its=quoteItemsOf(s);
+  let total=0;
+  const det=its.map(it=>{
+    const c=calcOf(Object.assign({},s,{product:it.product,qty:it.qty,colors:it.colors||[]}));
+    total+=c.total;
+    return Object.assign(c,{it});
+  });
+  return {det,total,items:its};
+}
 
 /* ================= 渲染：首页 ================= */
 function renderProducts(){
@@ -928,13 +988,13 @@ function renderChips(){
 }
 function renderHistory(){
   $('#hist-list').innerHTML=history.length?history.map((h,i)=>{
-    let price='';
-    try{price=money(calcOf(h).final);}catch(e){price='';}
+    let price='',tot='',nIt=1;
+    try{const q=quoteTotals(h);tot=fmtTotal(q.total);price=money(q.det[0].final);nIt=(h.items&&h.items.length)||1;}catch(e){}
     return `
     <div class="hcard" data-i="${i}">
       <div class="h-info">
-        <div class="h-ref">${esc(h.ref||'')}${price?' · '+price+'/套':''}</div>
-        <div class="h-sub">${esc(h.product&&h.product.cn||'')} · ${fmtInt(h.qty||0)} 套 · ${esc(h.term||'')}${h.port&&h.term!=='FOB'?' '+esc(h.port):''}${h.custName?' · 客户 '+esc(h.custName):''}</div>
+        <div class="h-ref">${esc(h.ref||'')}${tot?(nIt>1?' · '+tot+' · '+nIt+' 项':' · '+price+'/套'):''}</div>
+        <div class="h-sub">${esc(h.product&&h.product.cn||'')}${nIt>1?' 等 '+nIt+' 项':''} · ${esc(h.term||'')}${h.port&&h.term!=='FOB'?' '+esc(h.port):''}${h.custName?' · 客户 '+esc(h.custName):''}</div>
         <div class="h-sub">${h.ts?new Date(h.ts).toLocaleString('zh-CN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}):''}</div>
       </div>
       <button class="h-del" data-i="${i}" type="button">删除</button>
@@ -947,19 +1007,21 @@ function buildStats(){
   const st={count:0,prodMap:new Map(),termMap:new Map(),custMap:new Map(),custNameMap:new Map(),custN:0,todayN:0,todayAmt:0,weekN:0,weekAmt:0,totalAmt:0,priceSum:0,dayCounts:{}};
   for(let i=0;i<7;i++)st.dayCounts[dayKey(Date.now()-i*864e5)]=0;
   history.forEach(h=>{
-    let c={final:0,total:0};
-    try{c=calcOf(h);}catch(e){}
-    st.count++;st.priceSum+=c.final;st.totalAmt+=c.total;
-    const code=(h.product&&h.product.code)||'?';
-    const pc=st.prodMap.get(code)||{cn:(h.product&&h.product.cn)||'?',n:0,amt:0};
-    pc.n++;pc.amt+=c.total;st.prodMap.set(code,pc);
+    let qt={det:[],total:0};
+    try{qt=quoteTotals(h);}catch(e){}
+    st.count++;st.totalAmt+=qt.total;
+    quoteItemsOf(h).forEach((it,idx)=>{
+      const code=(it.product&&it.product.code)||'?';
+      const pc=st.prodMap.get(code)||{cn:(it.product&&it.product.cn)||'?',n:0,amt:0};
+      pc.n++;pc.amt+=qt.det[idx]?qt.det[idx].total:0;st.prodMap.set(code,pc);
+    });
     st.termMap.set(h.term||'',(st.termMap.get(h.term||'')||0)+1);
     st.custMap.set(h.cust||'',(st.custMap.get(h.cust||'')||0)+1);
     const cn=(h.custName||'').trim();
     if(cn)st.custNameMap.set(cn,(st.custNameMap.get(cn)||0)+1);
     const k=dayKey(h.ts||Date.now());
-    if(k in st.dayCounts){st.dayCounts[k]++;st.weekN++;st.weekAmt+=c.total;}
-    if(k===dayKey(Date.now())){st.todayN++;st.todayAmt+=c.total;}
+    if(k in st.dayCounts){st.dayCounts[k]++;st.weekN++;st.weekAmt+=qt.total;}
+    if(k===dayKey(Date.now())){st.todayN++;st.todayAmt+=qt.total;}
   });
   st.custN=st.custNameMap.size;
   st.avg=st.count?st.priceSum/st.count:0;
@@ -1022,8 +1084,11 @@ function exportCsv(){
   if(!history.length){toast('暂无报价记录');return;}
   const rows=[['单号','时间','客户','产品编号','产品名称','数量(套)','颜色数','贸易术语','目的港','包装','付款方式','客户类型','单价USD','总金额USD','单价CNY','总金额CNY','OEKO-TEX','BSCI','目标价USD']];
   history.slice().sort((a,b)=>(a.ts||0)-(b.ts||0)).forEach(h=>{
-    let c={final:0,total:0};try{c=calcOf(h);}catch(e){}
-    rows.push([h.ref||'',h.ts?new Date(h.ts).toLocaleString('zh-CN'):'',h.custName||'',h.product&&h.product.code||'',h.product&&h.product.cn||'',h.qty||0,(h.colors&&h.colors.length)||0,h.term||'',h.term!=='FOB'?(h.port||''):'',PACKS[h.pack]?PACKS[h.pack].cn:(h.pack||''),PAYS[h.pay]?PAYS[h.pay].cn:(h.pay||''),CUSTS[h.cust]?CUSTS[h.cust].cn:(h.cust||''),c.final.toFixed(2),c.total.toFixed(2),(c.final*rules.fxRate).toFixed(2),(c.total*rules.fxRate).toFixed(2),h.oeko?'是':'',h.bsci?'是':'',h.target||'']);
+    const qt=quoteTotals(h);
+    quoteItemsOf(h).forEach((it,idx)=>{
+      const d=qt.det[idx]||{final:0,total:0};
+      rows.push([h.ref+(quoteItemsOf(h).length>1?'-'+(idx+1):''),h.ts?new Date(h.ts).toLocaleString('zh-CN'):'',h.custName||'',it.product&&it.product.code||'',it.product&&it.product.cn||'',it.qty||0,(it.colors||[]).length,h.term||'',h.term!=='FOB'?(h.port||''):'',PACKS[h.pack]?PACKS[h.pack].cn:(h.pack||''),PAYS[h.pay]?PAYS[h.pay].cn:(h.pay||''),CUSTS[h.cust]?CUSTS[h.cust].cn:(h.cust||''),d.final.toFixed(2),d.total.toFixed(2),(d.final*rules.fxRate).toFixed(2),(d.total*rules.fxRate).toFixed(2),h.oeko?'是':'',h.bsci?'是':'',h.target||'']);
+    });
   });
   const csv='\uFEFF'+rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\r\n');
   const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
@@ -1139,6 +1204,13 @@ function renderPortSelect(){
   sel.innerHTML=names.map(n=>`<option value="${esc(n)}">${esc(n)}</option>`).join('');
   sel.value=names.includes(cur)?cur:names[0];
 }
+function renderCart(){
+  const strip=$('#cart-strip');
+  if(!state.cart.length){strip.hidden=true;return;}
+  strip.hidden=false;
+  $('#cart-n').textContent=state.cart.length+' 项';
+  $('#cart-chips').innerHTML=state.cart.map((c,i)=>`<span class="cchip">${esc(c.product.cn)} ×${fmtInt(c.qty)}<button data-i="${i}" type="button" aria-label="移除">×</button></span>`).join('');
+}
 function refreshCustList(){
   const seen=new Set(),opts=[];
   history.forEach(h=>{const n=(h.custName||'').trim();if(n&&!seen.has(n)){seen.add(n);opts.push(n);}});
@@ -1195,53 +1267,84 @@ function updateLive(){
 function renderResult(snap){
   curSnap=snap;
   const p=snap.product,c=calcOf(snap);
+  const qt=quoteTotals(snap);
+  const multi=(snap.items&&snap.items.length>1);
+  const issued='Issued: '+(snap.ts?new Date(snap.ts).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}));
   $('#res-ref').textContent=snap.ref||'';
-  $('#res-sub').textContent=`${p.code} · ${p.cn}${p.spec?' · '+p.spec:''}`;
+  $('#res-sub').textContent=multi?(snap.items.length+' 项产品 · 合计 '+fmtTotal(qt.total)):`${p.code} · ${p.cn}${p.spec?' · '+p.spec:''}`;
   /* 销售明细 */
-  $('#sd-prod').textContent=`${p.cn} · ${p.code}${p.spec?' · '+p.spec:''}`;
+  $('#sd-prod').textContent=multi?(snap.items.length+' 项产品报价'):`${p.cn} · ${p.code}${p.spec?' · '+p.spec:''}`;
   const custEl=$('#sd-cust');
   if(snap.custName){custEl.textContent='客户：'+snap.custName;custEl.style.display='inline-block';}
   else custEl.style.display='none';
-  $('#sd-lines').innerHTML=c.lines.map(l=>{
-    if(l.first)return `<div class="line base"><span>${esc(l.d)}</span><b>${money(l.v)}</b></div>`;
-    if(l.final)return `<div class="line final"><span>参考报价（取整到 $0.05）</span><b>${fmtDelta(l.delta)} → ${money(c.final)}</b></div>`;
-    return `<div class="line"><span><i>${l.t}</i>${esc(l.d)}</span><b class="${l.delta>0?'up':l.delta<0?'down':''}">${fmtDelta(l.delta)}</b></div>`;
-  }).join('');
-  $('#sd-total').innerHTML=`${fmtInt(snap.qty)} 套 × ${money(c.final)} = <b>${fmtTotal(c.total)}</b>`;
-  /* 毛利空间（填了成本价才显示，仅销售可见） */
-  const mc=$('#sd-margin');
-  if(p.cost>0){
-    const mg=c.final-p.cost;
-    mc.hidden=false;
-    mc.innerHTML=`毛利空间：$${mg.toFixed(2)} / 套（毛利率 ${(mg/c.final*100).toFixed(1)}%）<small>成本 $${p.cost.toFixed(2)} · 未含佣金与运费分摊，让利幅度自行把握</small>`;
-  }else mc.hidden=true;
-  $('#sd-moq').textContent=`每色 ${fmtInt(c.perColor)} 套（MOQ ${fmtInt(c.moq)} 套/色${c.moqOk?'，已满足':'，未满足'}）`;
-  const t=snap.target,chip=$('#sd-target');
-  if(t>0){
-    if(c.final<=t){chip.className='tchip ok';chip.textContent=`✓ 参考价低于客户目标 ${money(t)} 约 ${((1-c.final/t)*100).toFixed(1)}%，有成交空间`;}
-    else{chip.className='tchip no';chip.textContent=`△ 参考价高于客户目标 ${money(t)} 约 ${((c.final/t-1)*100).toFixed(1)}%，可谈批量 / 减配 / 付款条件`;}
-  }else{chip.className='tchip';chip.textContent='未填客户目标价（可选，填了可对比成交空间）';}
+  if(!multi){
+    $('#sd-lines').innerHTML=c.lines.map(l=>{
+      if(l.first)return `<div class="line base"><span>${esc(l.d)}</span><b>${money(l.v)}</b></div>`;
+      if(l.final)return `<div class="line final"><span>参考报价（取整到 $0.05）</span><b>${fmtDelta(l.delta)} → ${money(c.final)}</b></div>`;
+      return `<div class="line"><span><i>${l.t}</i>${esc(l.d)}</span><b class="${l.delta>0?'up':l.delta<0?'down':''}">${fmtDelta(l.delta)}</b></div>`;
+    }).join('');
+    $('#sd-total').innerHTML=`${fmtInt(snap.qty)} 套 × ${money(c.final)} = <b>${fmtTotal(c.total)}</b>`;
+    const mc=$('#sd-margin');
+    if(p.cost>0){
+      const mg=c.final-p.cost;
+      mc.hidden=false;
+      mc.innerHTML=`毛利空间：$${mg.toFixed(2)} / 套（毛利率 ${(mg/c.final*100).toFixed(1)}%）<small>成本 $${p.cost.toFixed(2)} · 未含佣金与运费分摊，让利幅度自行把握</small>`;
+    }else mc.hidden=true;
+    $('#sd-moq').textContent=`每色 ${fmtInt(c.perColor)} 套（MOQ ${fmtInt(c.moq)} 套/色${c.moqOk?'，已满足':'，未满足'}）`;
+    const t=snap.target,chip=$('#sd-target');
+    if(t>0){
+      if(c.final<=t){chip.className='tchip ok';chip.hidden=false;chip.textContent=`✓ 参考价低于客户目标 ${money(t)} 约 ${((1-c.final/t)*100).toFixed(1)}%，有成交空间`;}
+      else{chip.className='tchip no';chip.hidden=false;chip.textContent=`△ 参考价高于客户目标 ${money(t)} 约 ${((c.final/t-1)*100).toFixed(1)}%，可谈批量 / 减配 / 付款条件`;}
+    }else{chip.className='tchip';chip.hidden=false;chip.textContent='未填客户目标价（可选，填了可对比成交空间）';}
+  }else{
+    $('#sd-lines').innerHTML=qt.det.map((d,i)=>`<div class="line"><span><i>产品 ${i+1}</i>${esc(d.it.product.cn)} · ${fmtInt(d.it.qty)} 套 · ${d.nC} 色</span><b>${money(d.final)}/套 · 小计 ${fmtTotal(d.total)}</b></div>`).join('')
+      +`<div class="line"><span><i>说明</i>运费 / 关税按各项目体积与数量独立实算</span><b>—</b></div>`;
+    $('#sd-total').innerHTML=`${snap.items.length} 项产品合计 = <b>${fmtTotal(qt.total)}</b>`;
+    $('#sd-margin').hidden=true;
+    const bad=qt.det.filter(d=>!d.moqOk);
+    $('#sd-moq').textContent=bad.length?('未达 MOQ：'+bad.map(d=>`${d.it.product.cn}（每色 ${fmtInt(d.perColor)} < ${fmtInt(d.moq)}）`).join('、')):'全部产品满足每色 MOQ';
+    $('#sd-target').hidden=true;
+  }
+  $('#sd-cny').textContent=`折合人民币约 ¥${Math.round(qt.total*rules.fxRate).toLocaleString('zh-CN')}（汇率 ${rules.fxRate}，仅参考）`;
   /* 客户视角 */
-  $('#cv-name').textContent=p.en;
-  $('#cv-code').textContent='Art. No. '+p.code;
-  $('#cv-spec').textContent=p.spec;
-  $('#cv-dims').textContent=p.dimsEn;
+  const co=rules.companyName||'';
+  const coEl=$('#cv-co');coEl.hidden=!co;coEl.textContent=co;
+  $('#print-head').innerHTML=co?`<b>${esc(co)}</b><span>Reference Quotation</span>`:'';
   $('#cv-term').textContent=termText(snap);
-  $('#cv-issued').textContent='Issued: '+(snap.ts?new Date(snap.ts).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}));
+  $('#cv-issued').textContent=issued;
   const ctEl=$('#cv-contact');
   if(rules.companyContact){ctEl.textContent='Contact: '+rules.companyContact;ctEl.style.display='block';}
   else ctEl.style.display='none';
-  const co=rules.companyName||'';
-  const coEl=$('#cv-co');
-  coEl.hidden=!co;coEl.textContent=co;
-  $('#print-head').innerHTML=co?`<b>${esc(co)}</b><span>Reference Quotation</span>`:'';
-  $('#cv-price').textContent='$'+c.final.toFixed(2);
-  $('#cv-mul').textContent=`${fmtInt(snap.qty)} sets · $${c.final.toFixed(2)}`;
-  $('#cv-total').textContent=fmtTotal(c.total);
+  const im=$('#cv-img');
+  if(!multi&&p.img){im.src=p.img;im.style.display='block';}else im.style.display='none';
   const vd=Math.max(1,Math.round(rules.validDays)||7);
   const valid=new Date(Date.now()+vd*864e5).toLocaleDateString('en-US',{month:'short',day:'numeric'});
+  if(!multi){
+    $('#cv-items').hidden=true;
+    ['cv-name','cv-spec','cv-dims'].forEach(id=>$('#'+id).style.display='');
+    $('#cv-code').style.display='';
+    $('#cv-name').textContent=p.en;
+    $('#cv-code').textContent='Art. No. '+p.code;
+    $('#cv-spec').textContent=p.spec;
+    $('#cv-dims').textContent=p.dimsEn;
+    $('#cv-price').textContent='$'+c.final.toFixed(2);
+    $('#cv-mul').textContent=`${fmtInt(snap.qty)} sets · $${c.final.toFixed(2)}`;
+    $('#cv-total').textContent=fmtTotal(c.total);
+  }else{
+    $('#cv-items').hidden=false;
+    ['cv-name','cv-spec','cv-dims'].forEach(id=>$('#'+id).style.display='none');
+    $('#cv-code').style.display='none';
+    $('#cv-items').innerHTML=qt.det.map(d=>`
+      <div class="cvi"><img src="${d.it.product.img||thumb(d.it.product.tint)}" alt="">
+        <div class="cvi-t"><b>${esc(d.it.product.en)}</b><span>Art. No. ${esc(d.it.product.code)} · ${fmtInt(d.it.qty)} sets · ${d.nC} color${d.nC>1?'s':''}</span></div>
+        <div class="cvi-p"><b>${money(d.final)}</b><span>${fmtTotal(d.total)}</span></div>
+      </div>`).join('');
+    $('#cv-price').textContent=fmtTotal(qt.total);
+    $('#cv-mul').textContent=`${snap.items.length} items · USD`;
+    $('#cv-total').textContent=fmtTotal(qt.total);
+  }
   const rows=[
-    ['Order',`${fmtInt(snap.qty)} sets · ${c.nC} color${c.nC>1?'s':''} (±${snap.tol}%)`],
+    ['Order',multi?`${snap.items.length} items（见上方清单）`:`${fmtInt(snap.qty)} sets · ${c.nC} color${c.nC>1?'s':''} (±${snap.tol}%)`],
     ['Packaging',PACKS[snap.pack].en],
     ['Payment',PAYS[snap.pay].en],
     ['Sample',`${c.sampleDays} days`],
@@ -1251,33 +1354,45 @@ function renderResult(snap){
   rows.push(['Quote valid',`${vd} days · till ${valid}`]);
   $('#cv-rows').innerHTML=rows.map(r=>`<div class="t-row"><span>${r[0]}</span><b>${esc(r[1])}</b></div>`).join('');
   const moq=$('#cv-moq');
-  moq.className='moq'+(c.moqOk?'':' warn');
-  moq.textContent=c.moqOk?`✓ MOQ met · ${fmtInt(c.perColor)} sets / color`:`△ Below MOQ · ${fmtInt(c.perColor)} sets/color, need ≥ ${fmtInt(c.moq)}`;
+  if(!multi){
+    moq.className='moq'+(c.moqOk?'':' warn');
+    moq.textContent=c.moqOk?`✓ MOQ met · ${fmtInt(c.perColor)} sets / color`:`△ Below MOQ · ${fmtInt(c.perColor)} sets/color, need ≥ ${fmtInt(c.moq)}`;
+  }else{
+    const bad=qt.det.filter(d=>!d.moqOk);
+    moq.className='moq'+(bad.length?' warn':'');
+    moq.textContent=bad.length?('△ Below MOQ: '+bad.map(d=>d.it.product.code).join(', ')):'✓ MOQ met for all items';
+  }
   $('#cv-certs').innerHTML=(snap.oeko?'<span class="cert">✓ OEKO-TEX STANDARD 100</span>':'')+(snap.bsci?'<span class="cert">✓ BSCI AUDITED</span>':'');
   $('#cv-fine').textContent=`* ${snap.ref} · Reference quote for on-site negotiation only. Final price & terms subject to PI confirmation.`;
-  /* 人民币参考 */
-  $('#sd-cny').textContent=`折合人民币约 ¥${Math.round(c.total*rules.fxRate).toLocaleString('zh-CN')}（汇率 ${rules.fxRate}，仅参考）`;
-  lastShare=shareText(snap,c,valid);
+  lastShare=shareText(snap,c,valid,qt);
   $('#sh-wa').href='https://wa.me/?text='+encodeURIComponent(lastShare);
-  $('#sh-mail').href='mailto:?subject='+encodeURIComponent(`Quotation ${snap.ref} - ${p.en}`)+'&body='+encodeURIComponent(lastShare);
+  $('#sh-mail').href='mailto:?subject='+encodeURIComponent(`Quotation ${snap.ref}`)+'&body='+encodeURIComponent(lastShare);
 }
-function shareText(snap,c,valid){
+function shareText(snap,c,valid,qt){
   const p=snap.product;
   const certs=[snap.oeko?'OEKO-TEX':null,snap.bsci?'BSCI':null].filter(Boolean).join(' / ');
   const vd=Math.max(1,Math.round(rules.validDays)||7);
-  return [
-    rules.companyName?`*${rules.companyName}*`:'',
-    `Quotation ${snap.ref} (reference)`,
-    `Art. No. ${p.code}`,
-    `${p.en}${p.spec?' · '+p.spec:''}`,
-    p.dimsEn,
-    `${termText(snap)}: USD ${c.final.toFixed(2)} / set`,
-    `${fmtInt(snap.qty)} sets × ${c.final.toFixed(2)} = USD ${c.total.toLocaleString('en-US',{maximumFractionDigits:2})}`,
-    `Payment: ${PAYS[snap.pay].en} · Packaging: ${PACKS[snap.pack].en}`,
-    `Sample ${c.sampleDays} days · Production ${c.prodDays} days`,
-    `Quote valid ${vd} days (till ${valid})`,
-    certs?`Compliance: ${certs}`:''
-  ].filter(Boolean).join('\n');
+  const multi=snap.items&&snap.items.length>1;
+  const L=[];
+  if(rules.companyName)L.push('*'+rules.companyName+'*');
+  L.push('Quotation '+snap.ref+' (reference)');
+  if(multi){
+    qt.det.forEach(d=>L.push('· '+(d.it.product.en||d.it.product.cn)+' — '+fmtInt(d.it.qty)+' sets × USD '+d.final.toFixed(2)+' = USD '+d.total.toLocaleString('en-US',{maximumFractionDigits:2})));
+    L.push('TOTAL ('+snap.items.length+' items): USD '+qt.total.toLocaleString('en-US',{maximumFractionDigits:2}));
+    L.push('Price term: '+termText(snap)+' (Incoterms 2020)');
+  }else{
+    L.push('Art. No. '+p.code);
+    L.push(p.en+(p.spec?' · '+p.spec:''));
+    if(p.dimsEn)L.push(p.dimsEn);
+    L.push(termText(snap)+': USD '+c.final.toFixed(2)+' / set');
+    L.push(fmtInt(snap.qty)+' sets × '+c.final.toFixed(2)+' = USD '+c.total.toLocaleString('en-US',{maximumFractionDigits:2}));
+  }
+  L.push('Payment: '+PAYS[snap.pay].en+' · Packaging: '+PACKS[snap.pack].en);
+  L.push('Sample '+c.sampleDays+' days · Production '+c.prodDays+' days');
+  if(c.transit)L.push('Sea transit ~'+c.transit+' days to '+snap.port.trim().toUpperCase());
+  L.push('Quote valid '+vd+' days (till '+valid+')');
+  if(certs)L.push('Compliance: '+certs);
+  return L.filter(Boolean).join('\n');
 }
 
 /* ================= 视图切换 ================= */
@@ -1407,6 +1522,7 @@ function exportConfig(includeHistory){
   a.download=(includeHistory?'quoter-backup-':'quoter-config-')+new Date().toISOString().slice(0,10).replace(/-/g,'')+'.json';
   document.body.appendChild(a);a.click();a.remove();
   setTimeout(()=>URL.revokeObjectURL(a.href),3000);
+  markBackup();
   toast(includeHistory?'已导出全部数据（含 '+history.length+' 条报价记录）':'已导出配置（产品 / 参数 / 目的港运费表）');
 }
 function importConfig(file){
@@ -1467,7 +1583,7 @@ function findCode(){
 }
 function bind(){
   $('#btn-settings').addEventListener('click',()=>{
-    renderSetProducts();renderRulesBox();showScreen('screen-settings');
+    renderSetProducts();renderRulesBox();renderPortList();updateBkHint();showScreen('screen-settings');
   });
   $('#btn-set-back').addEventListener('click',()=>showScreen('screen-home'));
   $('#tabs').addEventListener('click',e=>{
@@ -1530,14 +1646,39 @@ function bind(){
     save();updateLive();
   });
   $('#btn-gen').addEventListener('click',()=>{
-    if(!state.qty||state.qty<100){toast('请输入数量（至少 100 套）');return;}
-    if(!state.colors.length){toast('请至少选择 1 个颜色');return;}
+    const items=state.cart.length
+      ?state.cart.map(c=>({product:c.product,qty:c.qty,colors:c.colors.slice()}))
+      :[{product:P(),qty:state.qty,colors:state.colors.slice()}];
+    if(!state.cart.length){
+      if(!state.qty||state.qty<100){toast('请输入数量（至少 100 套）');return;}
+      if(!state.colors.length){toast('请至少选择 1 个颜色');return;}
+    }
     if(state.term!=='FOB'&&!state.port.trim()){toast('CIF / DDP 请填写目的港');return;}
     const snap=currentFormSnap();
+    snap.items=items;
+    snap.product=items[0].product;snap.qty=items[0].qty;snap.colors=items[0].colors;
     snap.ref=makeRef();snap.ts=Date.now();
     history.unshift(snap);history=history.slice(0,30);saveHistory();
+    state.cart=[];save();renderCart();
     refreshCustList();
     renderResult(snap);showScreen('screen-result');switchView('cust');
+  });
+  $('#btn-addcart').addEventListener('click',()=>{
+    if(!state.qty||state.qty<100){toast('请输入数量（至少 100 套）');return;}
+    if(!state.colors.length){toast('请至少选择 1 个颜色');return;}
+    if(state.cart.length>=20){toast('报价单最多 20 项');return;}
+    if(state.cart.some(c=>c.product.code===P().code&&c.qty===state.qty)){toast('该产品与数量已在报价单中');return;}
+    state.cart.push({product:Object.assign({},P()),qty:state.qty,colors:state.colors.slice()});
+    save();renderCart();
+    toast('已加入报价单（共 '+state.cart.length+' 项）');
+  });
+  $('#cart-chips').addEventListener('click',e=>{
+    const b=e.target.closest('button[data-i]');if(!b)return;
+    state.cart.splice(parseInt(b.dataset.i),1);save();renderCart();
+  });
+  $('#cart-clear').addEventListener('click',()=>{
+    if(!state.cart.length)return;
+    armOnce($('#cart-clear'),'确认清空',()=>{state.cart=[];save();renderCart();});
   });
   $('#btn-back').addEventListener('click',()=>showScreen('screen-home'));
   $('#btn-edit').addEventListener('click',()=>showScreen('screen-home'));
@@ -1758,11 +1899,13 @@ function stopScan(){
 /* ================= 正式报价单（打印导出 PDF） ================= */
 function renderQuoteDoc(snap){
   const p=snap.product,c=calcOf(snap);
+  const its=quoteItemsOf(snap),qt=quoteTotals(snap);
   const vd=Math.max(1,Math.round(rules.validDays)||7);
   const today=new Date().toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric'});
   const valid=new Date(Date.now()+vd*864e5).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
   const co=rules.companyName||'SELLER EXPORT CO., LTD',lp=rules.loadPort||'QINGDAO';
-  const amount=c.total.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  const amount=qt.total.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  const bodyRows=its.map((it,i)=>{const d=qt.det[i];return `<tr><td>${i+1}</td><td><b>${esc(it.product.en)}</b>${it.product.spec?' · '+esc(it.product.spec):''}<br>${esc(it.product.dimsEn||'')}<br><span style="color:#777">${esc(it.product.cn)}${it.product.dimsCn?' · '+esc(it.product.dimsCn):''}</span></td><td class="num">${fmtInt(it.qty)} sets</td><td class="num">${d.final.toFixed(2)}</td><td class="num">${d.total.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}</td></tr>`;}).join('');
   const termLine=termText(snap)+' (Incoterms 2020)';
   const comp=[snap.oeko?'OEKO-TEX':null,snap.bsci?'BSCI':null].filter(Boolean).join(' / ')||'—';
   const terms=[
@@ -1772,7 +1915,7 @@ function renderQuoteDoc(snap){
     ['Sample / Production 打样与交期',`Sample ${c.sampleDays} days · Production ${c.prodDays} days after order & artwork confirmation`]
   ];
   if(c.transit)terms.push(['Sea transit 海运航程',`Approx. ${c.transit} days to ${snap.port.trim().toUpperCase()}`]);
-  terms.push(['MOQ 最小起订',fmtInt(c.moq)+' sets per color'],
+  terms.push(['MOQ 最小起订',its.length>1?its.map(it=>(it.product.code||'')+' ≥ '+fmtInt(it.product.moqPerColor||500)+'/color').join('；'):'≥ '+fmtInt(c.moq)+' sets per color'],
     ['Validity 报价有效期',`${vd} days, till ${valid}`],
     ['Compliance 认证',comp]);
   document.body.dataset.print='quote';
@@ -1787,14 +1930,8 @@ function renderQuoteDoc(snap){
     <div class="qd-to">To 致：<b>${esc(snap.custName||'Valued Customer')}</b></div>
     <table class="qd-table">
       <thead><tr><th style="width:32px">No.</th><th>Product / 产品描述</th><th class="num">Qty 数量</th><th class="num">Unit price (USD)</th><th class="num">Amount (USD)</th></tr></thead>
-      <tbody><tr>
-        <td>1</td>
-        <td><b>${esc(p.en)}</b>${p.spec?' · '+esc(p.spec):''}<br>${esc(p.dimsEn||'')}<br><span style="color:#777">${esc(p.cn)}${p.dimsCn?' · '+esc(p.dimsCn):''}</span></td>
-        <td class="num">${fmtInt(snap.qty)} sets</td>
-        <td class="num">${c.final.toFixed(2)}</td>
-        <td class="num">${amount}</td>
-      </tr></tbody>
-      <tfoot><tr><td colspan="3">TOTAL 合计（${fmtInt(snap.qty)} sets）</td><td class="num">USD</td><td class="num">${amount}</td></tr></tfoot>
+      <tbody>${bodyRows}</tbody>
+      <tfoot><tr><td colspan="3">TOTAL 合计（${its.length} item${its.length>1?'s':''}）</td><td class="num">USD</td><td class="num">${amount}</td></tr></tfoot>
     </table>
     <div class="qd-terms"><h4>Terms &amp; Conditions 条款</h4>
       ${terms.map(t=>`<div class="t"><span>${esc(t[0])}</span><div>${esc(t[1])}</div></div>`).join('')}
