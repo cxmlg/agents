@@ -557,11 +557,12 @@ select,.in-input{border:1px solid #e3e8e6;background:#f4f6f5;border-radius:10px;
         <div class="sec-title">▍配置备份</div>
         <div class="set-actions">
           <button class="sbtn" id="btn-export" type="button">导出配置 JSON</button>
+          <button class="sbtn" id="btn-backup" type="button">备份全部数据</button>
           <button class="sbtn" id="btn-import" type="button">导入配置</button>
           <button class="sbtn danger" id="btn-reset" type="button">恢复默认</button>
         </div>
         <input type="file" id="import-file" accept=".json,application/json" hidden>
-        <div class="sd-note">导出文件可发给同事导入，换新手机时也用它迁移数据。</div>
+        <div class="sd-note">「导出配置」含产品库 / 价格参数 / 目的港运费表，适合发同事；「备份全部数据」额外含报价记录，用于换机迁移。导入时自动识别文件类型。</div>
       </div>
     </div>
   </section>
@@ -621,7 +622,7 @@ select,.in-input{border:1px solid #e3e8e6;background:#f4f6f5;border-radius:10px;
 
 <script>
 'use strict';
-const APP_VER='2.1.1';
+const APP_VER='2.1.2';
 const $=s=>document.querySelector(s);
 const $$=s=>Array.from(document.querySelectorAll(s));
 
@@ -1382,15 +1383,16 @@ function deleteProduct(code){
   renderSetProducts();renderProducts();updateLive();
   toast('已删除：'+code);
 }
-function exportConfig(){
-  const data={app:'pocket-quoter',exportedAt:new Date().toISOString(),products,rules};
+function exportConfig(includeHistory){
+  const data={app:'pocket-quoter',ver:APP_VER,exportedAt:new Date().toISOString(),products,rules,ports};
+  if(includeHistory)data.history=history;
   const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
   const a=document.createElement('a');
   a.href=URL.createObjectURL(blob);
-  a.download='quoter-config-'+new Date().toISOString().slice(0,10).replace(/-/g,'')+'.json';
+  a.download=(includeHistory?'quoter-backup-':'quoter-config-')+new Date().toISOString().slice(0,10).replace(/-/g,'')+'.json';
   document.body.appendChild(a);a.click();a.remove();
   setTimeout(()=>URL.revokeObjectURL(a.href),3000);
-  toast('配置已导出');
+  toast(includeHistory?'已导出全部数据（含 '+history.length+' 条报价记录）':'已导出配置（产品 / 参数 / 目的港运费表）');
 }
 function importConfig(file){
   const rd=new FileReader();
@@ -1405,10 +1407,20 @@ function importConfig(file){
           if(k==='companyName'||k==='companyContact'||k==='loadPort'){if(typeof data.rules[k]==='string')rules[k]=data.rules[k].slice(0,80);}
           else if(typeof data.rules[k]==='number'&&isFinite(data.rules[k]))rules[k]=data.rules[k];
         }
+      if(Array.isArray(data.ports)){
+        const pl=data.ports.map(sanitizePort).filter(Boolean);
+        if(pl.length)ports=pl;
+      }
+      let histN=0;
+      if(Array.isArray(data.history)){
+        const hl=data.history.filter(h=>h&&h.ref&&h.product).slice(0,30);
+        if(hl.length){history=hl;histN=hl.length;saveHistory();}
+      }
       if(!products.some(p=>p.code===state.productCode))state.productCode=products[0].code;
-      saveProducts();saveRules();save();
-      renderSetProducts();renderRulesBox();renderProducts();updateLive();
-      toast('导入成功：'+products.length+' 支产品');
+      if(!ports.some(p=>p.name===state.port))state.port=ports[0].name;
+      saveProducts();saveRules();savePorts();save();
+      renderSetProducts();renderRulesBox();renderPortList();renderPortSelect();renderProducts();renderHistory();updateLive();
+      toast('导入成功：'+products.length+' 支产品 · '+ports.length+' 个目的港'+(histN?' · '+histN+' 条报价记录':''));
     }catch(e){toast('导入失败：文件格式不正确');}
   };
   rd.readAsText(file);
@@ -1555,7 +1567,8 @@ function bind(){
     else rules[k]=Math.max(0,Math.min(50,isFinite(num)?num:0));
     saveRules();updateLive();
   });
-  $('#btn-export').addEventListener('click',exportConfig);
+  $('#btn-export').addEventListener('click',()=>exportConfig(false));
+  $('#btn-backup').addEventListener('click',()=>exportConfig(true));
   $('#btn-import').addEventListener('click',()=>$('#import-file').click());
   $('#import-file').addEventListener('change',e=>{
     const f=e.target.files[0];

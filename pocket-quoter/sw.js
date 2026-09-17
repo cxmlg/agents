@@ -1,6 +1,6 @@
 /* 展会口袋报价器 - 离线缓存
  * 更新应用时把 CACHE 版本号 +1，老缓存会自动清除 */
-const CACHE = 'pqs-v17';
+const CACHE = 'pqs-v18';
 const ASSETS = [
   './',
   './index.html',
@@ -28,10 +28,10 @@ self.addEventListener('activate', e => {
 self.addEventListener('fetch', e => {
   const req = e.request;
   if (req.method !== 'GET') return;
-  /* 页面导航：网络优先，断网回缓存（保证更新能进来） */
+  /* 页面导航：网络优先且绕过 HTTP 缓存，断网回缓存（保证更新能进来） */
   if (req.mode === 'navigate') {
     e.respondWith(
-      fetch(req)
+      fetch(req, { cache: 'no-cache' })
         .then(res => {
           const copy = res.clone();
           caches.open(CACHE).then(c => c.put('./index.html', copy));
@@ -43,7 +43,7 @@ self.addEventListener('fetch', e => {
   }
   /* 静态资源：缓存优先 */
   e.respondWith(
-    caches.match(req).then(hit => hit || fetch(req).then(res => {
+    caches.match(req).then(hit => hit || fetch(req, { cache: 'no-cache' }).then(res => {
       if (res.ok && new URL(req.url).origin === location.origin) {
         const copy = res.clone();
         caches.open(CACHE).then(c => c.put(req, copy));
