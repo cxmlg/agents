@@ -1,6 +1,6 @@
 /* 展会口袋报价器 - 离线缓存
  * 更新应用时把 CACHE 版本号 +1，老缓存会自动清除 */
-const CACHE = 'pqs-v18';
+const CACHE = 'pqs-v19';
 const ASSETS = [
   './',
   './index.html',
@@ -8,7 +8,8 @@ const ASSETS = [
   './icons/icon-192.png',
   './icons/icon-512.png',
   './icons/icon.svg',
-  './vendor/zxing.min.js'
+  './vendor/zxing.min.js',
+  './vendor/qrcode.min.js'
 ];
 
 self.addEventListener('install', e => {

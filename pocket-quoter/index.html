@@ -269,11 +269,23 @@ select,.in-input{border:1px solid #e3e8e6;background:#f4f6f5;border-radius:10px;
 .qd-sign>div{flex:1;text-align:center;font-size:11.5px}
 .qd-sign span{display:block;font-size:11px;color:#555;margin-bottom:48px}
 
+/* ---------- 产品标签（打印贴货） ---------- */
+#label-sheet{display:none}
+.lbsheet{display:grid;grid-template-columns:repeat(2,86mm);gap:4mm;padding:5mm}
+.lb{width:86mm;height:32mm;border:1px dashed #999;display:flex;align-items:center;gap:4mm;padding:2mm;box-sizing:border-box;overflow:hidden}
+.lb-qr{width:26mm;height:26mm;flex:none}
+.lb-qr svg{width:26mm;height:26mm;display:block}
+.lb-info{display:flex;flex-direction:column;justify-content:center;gap:1mm;min-width:0}
+.lb-info b{font-size:13pt;line-height:1.2}
+.lb-info span{font-size:9pt;color:#333;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lb-code{font-family:Consolas,monospace;font-weight:700;color:#0e4f45;font-size:10.5pt;letter-spacing:.5px}
+.lb-co{font-size:8pt;color:#777}
+
 /* ---------- 打印：仅输出正式报价单 ---------- */
 @media print{
   body{background:#fff}
-  #app,#toast,#scan-overlay{display:none!important}
-  #quote-doc{display:block!important}
+  #app,#toast,#scan-overlay,#quote-doc{display:none!important}
+  #label-sheet{display:block!important}
 }
 </style>
 </head>
@@ -502,7 +514,7 @@ select,.in-input{border:1px solid #e3e8e6;background:#f4f6f5;border-radius:10px;
     </header>
     <div class="pane active" style="padding-bottom:40px">
       <div class="card">
-        <div class="sec-title">▍产品库管理</div>
+        <div class="sec-title" style="justify-content:space-between">▍产品库管理<button class="sbtn ibtn" id="btn-labels-all" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>打印全部产品标签</button></div>
         <div id="set-plist"></div>
         <button class="addp" id="btn-add-prod" type="button">＋ 新增产品</button>
         <div id="prod-form" hidden style="margin-top:12px">
@@ -612,6 +624,7 @@ select,.in-input{border:1px solid #e3e8e6;background:#f4f6f5;border-radius:10px;
 
 </div>
 <div id="quote-doc"></div>
+<div id="label-sheet"></div>
 <div id="toast"></div>
 <div id="scan-overlay" hidden>
   <div class="scan-frame"><video id="scan-video" autoplay playsinline muted></video></div>
@@ -622,7 +635,7 @@ select,.in-input{border:1px solid #e3e8e6;background:#f4f6f5;border-radius:10px;
 
 <script>
 'use strict';
-const APP_VER='2.1.2';
+const APP_VER='2.2';
 const $=s=>document.querySelector(s);
 const $$=s=>Array.from(document.querySelectorAll(s));
 
@@ -1289,6 +1302,7 @@ function renderSetProducts(){
         <span>${esc(p.code)}${p.spec?' · '+esc(p.spec):''}</span>
         <span>FOB $${p.base.toFixed(2)} · 每色 MOQ ${fmtInt(p.moqPerColor)} 套</span>
       </div>
+      <button class="sbtn" data-act="label" type="button">标签</button>
       <button class="sbtn" data-act="edit" type="button">编辑</button>
       <button class="sbtn danger" data-act="del" type="button">删除</button>
     </div>`).join('');
@@ -1542,9 +1556,11 @@ function bind(){
   $('#set-plist').addEventListener('click',e=>{
     const b=e.target.closest('button');if(!b)return;
     const code=b.closest('.setp').dataset.code;
+    if(b.dataset.act==='label'){printLabels(Array(14).fill(products.find(x=>x.code===code)).filter(Boolean));return;}
     if(b.dataset.act==='edit')openProductForm(code);
     else armOnce(b,'确认',()=>deleteProduct(code));
   });
+  $('#btn-labels-all').addEventListener('click',()=>printLabels(products.slice()));
   $('#btn-add-prod').addEventListener('click',()=>openProductForm(''));
   $('#pf-cancel').addEventListener('click',closeProductForm);
   $('#pf-save').addEventListener('click',saveProductForm);
@@ -1785,6 +1801,29 @@ function renderQuoteDoc(snap){
       <div><span>Customer confirmation 客户确认</span>${esc(snap.custName||'')}<br><br><i>Signature / date</i></div>
     </div>
    </div>`;
+}
+/* ================= 产品二维码标签（打印贴货） ================= */
+function qrSvg(text){
+  const q=window.qrcode(0,'M');
+  q.addData(text);q.make();
+  return q.createSvgTag({cellSize:2,margin:0,scalable:true});
+}
+function printLabels(list){
+  if(!list.length){toast('暂无产品');return;}
+  loadScript('./vendor/qrcode.min.js').then(ok=>{
+    if(!ok||!window.qrcode){toast('二维码组件加载失败，请检查网络后重试');return;}
+    $('#label-sheet').innerHTML=`<div class="lbsheet">${list.map(p=>`
+      <div class="lb">
+        <div class="lb-qr">${qrSvg(p.code)}</div>
+        <div class="lb-info">
+          <b>${esc(p.cn)}</b>
+          <span class="lb-code">${esc(p.code)}</span>
+          ${p.spec?`<span>${esc(p.spec)}</span>`:''}
+          ${rules.companyName?`<span class="lb-co">${esc(rules.companyName)}</span>`:''}
+        </div>
+      </div>`).join('')}</div>`;
+    window.print();
+  });
 }
 function bindHold(){
   const hold=$('#hold'),fill=hold.querySelector('.fill');
