@@ -144,12 +144,12 @@ select,.in-input{border:1px solid #e3e8e6;background:#f4f6f5;border-radius:10px;
 .rgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .ritem{background:#f6f8f7;border:1px solid #e3e8e6;border-radius:10px;padding:8px 10px}
 .ritem label{font-size:11px;color:#6b7a77;display:block;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ritem input{width:100%;border:0;background:transparent;font-size:15px;font-weight:600;color:#17211f;outline:none}
+.ritem input{width:100%;border:0;background:transparent;font-size:16px;font-weight:600;color:#17211f;outline:none}
 .set-actions{display:flex;gap:8px;flex-wrap:wrap}
 .set-actions .sbtn{flex:1;padding:10px 0;font-size:13px;text-align:center}
 .pform .ritem{margin-bottom:8px}
 .pform label{font-size:11px;color:#6b7a77;display:block;margin-bottom:4px}
-.pform input{width:100%;border:0;background:transparent;font-size:15px;outline:none}
+.pform input{width:100%;border:0;background:transparent;font-size:16px;outline:none}
 .pform-btns{display:flex;gap:8px;margin-top:4px}
 .pform-btns button{flex:1;border:0;border-radius:10px;padding:11px 0;font-size:14px;font-weight:700}
 .pf-save{background:#12655a;color:#fff}
@@ -284,8 +284,9 @@ select,.in-input{border:1px solid #e3e8e6;background:#f4f6f5;border-radius:10px;
 /* ---------- 打印：仅输出正式报价单 ---------- */
 @media print{
   body{background:#fff}
-  #app,#toast,#scan-overlay,#quote-doc{display:none!important}
-  #label-sheet{display:block!important}
+  #app,#toast,#scan-overlay,#quote-doc,#label-sheet{display:none!important}
+  body[data-print="quote"] #quote-doc{display:block!important}
+  body[data-print="labels"] #label-sheet{display:block!important}
 }
 </style>
 </head>
@@ -635,7 +636,7 @@ select,.in-input{border:1px solid #e3e8e6;background:#f4f6f5;border-radius:10px;
 
 <script>
 'use strict';
-const APP_VER='2.2';
+const APP_VER='2.2.1';
 const $=s=>document.querySelector(s);
 const $$=s=>Array.from(document.querySelectorAll(s));
 
@@ -1535,6 +1536,7 @@ function bind(){
     const snap=currentFormSnap();
     snap.ref=makeRef();snap.ts=Date.now();
     history.unshift(snap);history=history.slice(0,30);saveHistory();
+    refreshCustList();
     renderResult(snap);showScreen('screen-result');switchView('cust');
   });
   $('#btn-back').addEventListener('click',()=>showScreen('screen-home'));
@@ -1701,6 +1703,7 @@ async function startScan(){
     stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}},audio:false});
   }catch(e){
     let m='无法打开相机：';
+    $('#scan-note').textContent='支持条码 / 二维码';
     if(e&&(e.name==='NotAllowedError'||e.name==='PermissionDeniedError'))
       m+='相机权限被拒绝。请在 iPhone 设置 → App → Safari → 相机 里改为允许；或删除该网页的摄像头权限后刷新重试';
     else if(e&&e.name==='NotFoundError') m+='未找到可用相机';
@@ -1760,7 +1763,7 @@ function renderQuoteDoc(snap){
   const valid=new Date(Date.now()+vd*864e5).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
   const co=rules.companyName||'SELLER EXPORT CO., LTD',lp=rules.loadPort||'QINGDAO';
   const amount=c.total.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
-  const termLine=termText(snap)+(snap.term!=='FOB'?' (Incoterms 2020)':' — FOB '+(lp||'China port'));
+  const termLine=termText(snap)+' (Incoterms 2020)';
   const comp=[snap.oeko?'OEKO-TEX':null,snap.bsci?'BSCI':null].filter(Boolean).join(' / ')||'—';
   const terms=[
     ['Price term 价格条款',termLine],
@@ -1772,6 +1775,7 @@ function renderQuoteDoc(snap){
   terms.push(['MOQ 最小起订',fmtInt(c.moq)+' sets per color'],
     ['Validity 报价有效期',`${vd} days, till ${valid}`],
     ['Compliance 认证',comp]);
+  document.body.dataset.print='quote';
   $('#quote-doc').innerHTML=`
    <div class="qd">
     <div class="qd-head">
@@ -1812,6 +1816,7 @@ function printLabels(list){
   if(!list.length){toast('暂无产品');return;}
   loadScript('./vendor/qrcode.min.js').then(ok=>{
     if(!ok||!window.qrcode){toast('二维码组件加载失败，请检查网络后重试');return;}
+    document.body.dataset.print='labels';
     $('#label-sheet').innerHTML=`<div class="lbsheet">${list.map(p=>`
       <div class="lb">
         <div class="lb-qr">${qrSvg(p.code)}</div>
